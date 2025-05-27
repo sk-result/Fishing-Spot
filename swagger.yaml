@@ -1,0 +1,202 @@
+openapi: 3.0.0
+info:
+  title: Fishing Spot Rental
+  version: 1.0.0
+  description: API untuk mengelola lokasi pemancingan dan spesies ikan
+
+servers:
+  - url: http://localhost:3000/api
+
+paths:
+  /fishing:
+    get:
+      summary: Get all fishing spots
+      tags: [Fishing]
+      responses:
+        '200':
+          description: Berhasil mendapatkan semua fishing spot
+
+  /fishing/{id}:
+    get:
+      summary: Get fishing by ID
+      tags: [Fishing]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Fishing ditemukan
+        '404':
+          description: Tidak ditemukan
+
+    put:
+      summary: Update fishing
+      tags: [Fishing]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FishingInput'
+      responses:
+        '200':
+          description: Fishing diperbarui
+
+    delete:
+      summary: Delete fishing
+      tags: [Fishing]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Fishing dihapus
+
+  /fishing/create:
+    post:
+      summary: Create fishing spot
+      tags: [Fishing]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FishingInput'
+      responses:
+        '201':
+          description: Fishing dibuat
+
+  /species:
+    get:
+      summary: Get all fish species
+      tags: [FishSpecies]
+      responses:
+        '200':
+          description: Semua spesies ikan
+
+  /species/show/{id}:
+    get:
+      summary: Get species by ID
+      tags: [FishSpecies]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Spesies ditemukan
+        '404':
+          description: Tidak ditemukan
+
+  /species/create:
+    post:
+      summary: Create fish species
+      tags: [FishSpecies]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [name, description, price_per_hour, status]
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                price_per_hour:
+                  type: number
+                status:
+                  type: string
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Spesies dibuat
+
+  /species/update/{id}:
+    put:
+      summary: Update fish species
+      tags: [FishSpecies]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+      responses:
+        '200':
+          description: Spesies diperbarui
+
+  /species/delete/{id}:
+    delete:
+      summary: Delete fish species
+      tags: [FishSpecies]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Spesies dihapus
+        '404':
+          description: Tidak ditemukan
+
+components:
+  schemas:
+    FishingInput:
+      type: object
+      required:
+        - name
+        - description
+        - price_per_hour
+        - status
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        price_per_hour:
+          type: number
+        image:
+          type: string
+        status:
+          type: string
+
+    Specie:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
