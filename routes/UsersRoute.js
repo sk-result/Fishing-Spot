@@ -5,10 +5,11 @@ import Users from "../controllers/UsersController.js";
 
 const router = express.Router();
 
-router.post("/", Users.Register);
-// router.get("/show/:id",Users.getSpeciesById);
-// router.post("/create", Users.createSpecies);
-// router.put("/update/:id", Users.updateSpecies);
-// router.delete("/delete/:id", Users.deleteSpecies);
+router.post("/register", Users.Register);
+router.post("/login",Users.Login);
+router.post("/logout", Users.Logout);
+router.get("/profil/:id", Users.GetById);
+router.get("/profilAll", Users.GetAll);
+router.put("/update/:id", Users.Update);
 
 export default router;

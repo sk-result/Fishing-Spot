@@ -1,7 +1,6 @@
 
 import express from "express";
 import FishSpecies from "../controllers/FishSpeciesController.js";
-import validasiSchema from "../validator/validasi.js";
 
 const router = express.Router();
 
