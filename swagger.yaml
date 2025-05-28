@@ -64,7 +64,7 @@ paths:
         '200':
           description: Fishing dihapus
 
-  /fishing/create:
+  /fishing/:
     post:
       summary: Create fishing spot
       tags: [Fishing]

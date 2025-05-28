@@ -2,10 +2,14 @@ import prisma from "../models/prismaClient.js";
 import validasiSchema from "../validator/validasi_user.js";
 import bcrypt, { compare } from "bcrypt";
 import jwt from "jsonwebtoken";
-const JWT_SECRET = "ajskj1jkj12212";
+
+import dotenv from "dotenv";
+dotenv.config();
+const secret = process.env.JWT_SECRET;
+
 const UsersController = {
   Register: async (req, res, next) => {
-    try {   
+    try {
       const { error, value } = validasiSchema.validasiRegister.validate(
         req.body,
         {
@@ -95,7 +99,7 @@ const UsersController = {
       // Buat token
       const token = jwt.sign(
         { id: user.id, email: user.email, role: user.role },
-        JWT_SECRET,
+        secret,
         {
           expiresIn: "1h",
         }
@@ -146,7 +150,7 @@ const UsersController = {
     }
   },
 
-  GetAll: async (req, res, next) => {
+  GetAllAdmin: async (req, res, next) => {
     try {
       const user = await prisma.users.findMany();
       res.status(200).json({
@@ -161,19 +165,43 @@ const UsersController = {
       });
     }
   },
+  GetAllUser: async (req, res, next) => {
+    try {
+      const users = await prisma.users.findMany({
+        select: {
+          username: true,
+          phone_number: true,
+        },
+      });
+
+      res.status(200).json({
+        message: "Data user berhasil diambil",
+        users,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: "error",
+        message: "User tidak ada",
+        error: error.message,
+      });
+    }
+  },
 
   Update: async (req, res, next) => {
     try {
       const id = parseInt(req.params.id);
-      const { error, value } = validasiSchema.validasiRegister.validate(req.body, {
-        abortEarly : false
-      });
+      const { error, value } = validasiSchema.validasiRegister.validate(
+        req.body,
+        {
+          abortEarly: false,
+        }
+      );
       if (error) {
         res.status(422).json({
           error: error,
         });
       }
-      const { username, email, password, phone_number } = value;
+      const { username, email, password, phone_number, role } = value;
 
       const hashedPassword = await bcrypt.hash(value.password, 10);
 
@@ -182,13 +210,53 @@ const UsersController = {
         data: {
           username,
           email,
-          password : hashedPassword,
-          phone_number
-        }
+          password: hashedPassword,
+          phone_number,
+          role,
+        },
       });
-      res.json(user)
+      res.json(user);
     } catch (err) {
-      return res.status(404).json({message : ""})
+      return res.status(404).json({ message: "" });
+    }
+  },
+
+  Profile: async (req, res, next) => {
+    try {
+      const userId = req.user.id;
+
+      const user = await prisma.users.findUnique({
+        where: { id: userId },
+      });
+
+      if (!user) {
+        return res.status(404).json({ message: "User tidak ditemukan" });
+      }
+
+      return res.status(200).json({
+        message: "Data user ditemukan",
+        user: {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          phone_number: user.phone_number,
+        },
+      });
+    } catch (err) {
+      return res.status(500).json({
+        message: "Terjadi kesalahan server",
+        error: err.message,
+      });
+    }
+  },
+
+  Delete: async (req, res, next) => {
+    const id = parseInt(req.params.id);
+    try {
+      await prisma.users.delete({ where: { id } });
+      res.json({ message: "Akun telah dihapus" });
+    } catch (error) {
+      res.status(404).json({ error: "Data tidak ditemukan" });
     }
   },
 };
