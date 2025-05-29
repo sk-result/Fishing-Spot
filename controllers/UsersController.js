@@ -197,9 +197,8 @@ const UsersController = {
         }
       );
       if (error) {
-        res.status(422).json({
-          error: error,
-        });
+        const errors = error.details.map((detail) => detail.message);
+        return res.status(400).json({ message: "Validasi gagal", errors });
       }
       const { username, email, password, phone_number, role } = value;
 
