@@ -1,10 +1,9 @@
 import express from "express";
-import fishSpeciesRoute from "./routes/TicketUsageRoute.js";
+import TicketUsageRoute from "./routes/TicketUsageRoute.js";
 import fishingRoute from "./routes/FishingSpotRoute.js";
 import UsersRoute from "./routes/UsersRoute.js";
 import swaggerUi from "swagger-ui-express";
 import YAML from "yamljs";
-import TicketUsageController from "./controllers/TicketUsageController.js";
 
 const app = express();
 
