@@ -1,7 +1,9 @@
 import express from "express";
-import TicketsRoute from "./routes/TicketsRoute.js";
+import TicketsUsagesRoute from "./routes/TicketsRoute.js";
 import fishingRoutes from "./routes/FishingSpotRoute.js";
 import UsersRoutes from "./routes/UsersRoute.js";
+import TicketsRoute from "./routes/TicketsRoute.js";
+
 import swaggerUi from "swagger-ui-express";
 import YAML from "yamljs";
 
@@ -11,9 +13,12 @@ const swaggerDocument = YAML.load("./swagger.yaml");
 app.use(express.json());
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 app.use("/api/fishing", fishingRoutes);
 app.use("/api/tickets", TicketsRoute);
+app.use("/api/usages", TicketsUsagesRoute);
 app.use("/api/users", UsersRoutes);
+
 
 app.use((err, req, res, next) => {
   console.error(err);

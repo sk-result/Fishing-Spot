@@ -21,15 +21,16 @@ enum Role {
 }
 
 model Users {
-  id           Int       @id @default(autoincrement())
-  username     String    @unique @db.VarChar(50)
-  email        String    @unique @db.VarChar(100)
-  password     String    @db.VarChar(100)
-  role         Role      @default(user)
-  phone_number String    @db.VarChar(20)
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  id           Int           @id @default(autoincrement())
+  username     String        @unique @db.VarChar(50)
+  email        String        @unique @db.VarChar(100)
+  password     String        @db.VarChar(100)
+  role         Role          @default(user)
+  phone_number String        @db.VarChar(20)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
   tickets      tickets[]
+  TicketUsage  TicketUsage[]
 }
 
 enum Status {
@@ -38,15 +39,17 @@ enum Status {
 }
 
 model Fishing {
-  id             Int       @id @default(autoincrement())
-  name           String    @db.VarChar(50)
-  description    String    @db.Text()
-  price_per_hour Decimal   @db.Decimal()
-  image          String    @db.VarChar(100)
+  id             Int      @id @default(autoincrement())
+  name           String   @db.VarChar(50)
+  description    String   @db.Text()
+  price_per_hour Decimal  @db.Decimal()
+  image          String   @db.VarChar(100)
   status         Status
-  createdAt      DateTime  @default(now())
-  updateAt       DateTime  @default(now()) @updatedAt
-  tickets        tickets[]
+  createdAt      DateTime @default(now())
+  updateAt       DateTime @default(now()) @updatedAt
+
+  tickets      tickets[]
+  ticketUsages TicketUsage[] // tambahkan ini
 
   @@map("fishing")
 }
@@ -68,6 +71,23 @@ model tickets {
   status           StatusTickets
   duration_minutes Int
   created_at       DateTime      @default(now())
+  TicketUsage      TicketUsage[]
 
   @@map("tickets")
+}
+
+model TicketUsage {
+  id            Int      @id @default(autoincrement())
+  userId        Int
+  ticketId      Int
+  usedAt        DateTime
+  durationUsed  Int
+  fishingSpotId Int
+
+  // Relasi
+  user        Users   @relation(fields: [userId], references: [id])
+  ticket      tickets @relation(fields: [ticketId], references: [id])
+  fishingSpot Fishing @relation(fields: [fishingSpotId], references: [id])
+
+  @@map("ticket_usages")
 }
