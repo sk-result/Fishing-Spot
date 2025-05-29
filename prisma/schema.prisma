@@ -29,6 +29,8 @@ model Users {
   phone_number String   @db.VarChar(20)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  ticketUsages TicketUsage[]
 }
 
 model Specie {
@@ -57,4 +59,42 @@ model Fishing {
   updateAt       DateTime @default(now()) @updatedAt
 
   @@map("fishing")
+
+  tickets        tickets[]        // sudah ada di relasi dari tickets
+  ticketUsages   TicketUsage[]  // tambahkan ini
+}
+enum StatusTickets {
+  unused
+  used
+  expired
+}
+
+model tickets {
+  id               Int           @id @default(autoincrement())
+  ticket_code      String        @db.VarChar(10)
+  fishing_spot_id  Int
+  fishing_spot     Fishing       @relation(fields: [fishing_spot_id], references: [id])
+  valid_date       DateTime
+  status           StatusTickets
+  duration_minutes Int
+  created_at       DateTime      @default(now())
+
+  @@map("tickets")
+
+  ticketUsages     TicketUsage[]  // tambahkan ini
+}
+model TicketUsage {
+  id            Int      @id @default(autoincrement())
+  userId        Int
+  ticketId      Int
+  usedAt        DateTime
+  durationUsed  Int
+  fishingSpotId Int
+
+  // Relasi
+  user         Users   @relation(fields: [userId], references: [id])
+  ticket       tickets @relation(fields: [ticketId], references: [id])
+  fishingSpot  Fishing @relation(fields: [fishingSpotId], references: [id])
+
+  @@map("ticket_usages")
 }
