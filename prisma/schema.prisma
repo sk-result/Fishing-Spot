@@ -17,7 +17,7 @@ datasource db {
 enum Role {
   user
   admin
-  owner
+  SuperAdmin
 }
 
 model Users {

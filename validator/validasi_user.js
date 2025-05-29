@@ -23,8 +23,8 @@ const validasiSchema = {
       "string.min": "Password minimal 6 karakter",
       "any.required": "Password wajib diisi",
     }),
-    role: Joi.string().valid("admin", "owner", "user").optional().messages({
-      "any.only": "Role harus admin, owner, atau user",
+    role: Joi.string().valid("admin", "SuperAdmin", "user").optional().messages({
+      "any.only": "Role harus admin, SuperAdmin, atau user",
       "any.required": "Role wajib diisi",
     }),
     phone_number: Joi.string()
