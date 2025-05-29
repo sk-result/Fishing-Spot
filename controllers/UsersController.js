@@ -98,7 +98,7 @@ const UsersController = {
 
       // Buat token
       const token = jwt.sign(
-        { id: user.id, email: user.email, role: user.role },
+        {username: user.username, id: user.id, email: user.email, role: user.role },
         secret,
         {
           expiresIn: "1h",

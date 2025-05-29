@@ -3,6 +3,7 @@ import TicketsUsagesRoute from "./routes/TicketUsageRoute.js";
 import fishingRoutes from "./routes/FishingSpotRoute.js";
 import UsersRoutes from "./routes/UsersRoute.js";
 import TicketsRoute from "./routes/TicketsRoute.js";
+import PaymentRoute from "./routes/PaymentRoute.js";
 
 import swaggerUi from "swagger-ui-express";
 import YAML from "yamljs";
@@ -18,6 +19,7 @@ app.use("/api/fishing", fishingRoutes);
 app.use("/api/tickets", TicketsRoute);
 app.use("/api/usages", TicketsUsagesRoute);
 app.use("/api/users", UsersRoutes);
+app.use("/api/payment", PaymentRoute);
 
 
 app.use((err, req, res, next) => {
