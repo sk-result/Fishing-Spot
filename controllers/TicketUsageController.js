@@ -1,52 +1,71 @@
 import prisma from "../models/prismaClient.js";
-  
-const ticketUsageController = {
-  // Create new TicketUsage
-  create: async (req, res) => {
-    try {
-      const { userId, ticketId, usedAt, durationUsed, fishingSpotId } =
-        req.body;
 
-      // Validasi input
-      if (!userId || !ticketId || !usedAt || !durationUsed || !fishingSpotId) {
-        return res.status(400).json({ error: "All fields are required" });
+
+const ticketUsageController = {
+  useTicket: async (req, res) => {
+    try {
+      const { ticketId } = req.body;
+      const userId = req.user?.id;
+
+      if (!userId) {
+        return res.status(401).json({ message: "Unauthorized" });
       }
 
-      // Bisa tambah validasi lebih lanjut, misal cek apakah userId, ticketId, fishingSpotId valid di DB
+      const ticket = await prisma.tickets.findUnique({
+        where: { id: ticketId },
+      });
 
-      // Create record
-      const newUsage = await prisma.ticketUsage.create({
+      if (!ticket) {
+        return res.status(404).json({ message: "Tiket tidak ditemukan" });
+      }
+
+      if (ticket.user_id !== userId) {
+        return res.status(403).json({ message: "Tiket bukan milikmu" });
+      }
+
+      if (ticket.status === "used") {
+        return res.status(400).json({ message: "Tiket sudah digunakan" });
+      }
+
+      const now = new Date();
+      if (ticket.valid_date < now) {
+        await prisma.tickets.update({
+          where: { id: ticketId },
+          data: { status: "expired" },
+        });
+        return res.status(400).json({ message: "Tiket sudah kedaluwarsa" });
+      }
+
+      // Hitung durasi penggunaan jika dibutuhkan
+      const durationUsed = ticket.duration_minutes; // Atau bisa dihitung real time
+
+      // Simpan ke ticket_usages
+      const usage = await prisma.ticketUsage.create({
         data: {
           userId,
           ticketId,
-          usedAt: new Date(usedAt),
+          usedAt: now,
           durationUsed,
-          fishingSpotId,
+          fishingSpotId: ticket.fishing_spot_id,
         },
       });
 
-      res.status(201).json(newUsage);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Internal server error" });
-    }
-  },
-
-  // Get all TicketUsage with related data
-  getAll: async (req, res) => {
-    try {
-      const usages = await prisma.ticketUsage.findMany({
-        include: {
-          user: true,
-          ticket: true,
-          fishingSpot: true,
-        },
+      // Update status tiket ke 'used'
+      await prisma.tickets.update({
+        where: { id: ticketId },
+        data: { status: "used" },
       });
 
-      res.json(usages);
+      res.status(200).json({
+        message: "Tiket berhasil digunakan",
+        usage,
+      });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Internal server error" });
+      res.status(500).json({
+        status: "error",
+        message: "Gagal menggunakan tiket",
+        error: error.message,
+      });
     }
   },
 };

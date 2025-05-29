@@ -163,6 +163,7 @@ const TicketsController = {
 
       // Set valid_date hari ini (bisa disesuaikan)
       const valid_date = new Date();
+      valid_date.setDate(valid_date.getDate() + 7);
 
       // Set status default
       const status = "unused";
