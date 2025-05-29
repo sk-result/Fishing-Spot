@@ -2,10 +2,6 @@ import Joi from "joi";
 
 // Skema validasi untuk create dan update
 export const TicketUsageSchema = Joi.object({
-  user_id: Joi.number().integer().required().messages({
-    "number.base": "user_id harus berupa angka",
-    "any.required": "user_id wajib diisi",
-  }),
   ticket_id: Joi.number().integer().required().messages({
     "number.base": "ticket_id harus berupa angka",
     "any.required": "ticket_id wajib diisi",

@@ -1,5 +1,5 @@
 import express from "express";
-import TicketsUsagesRoute from "./routes/TicketsRoute.js";
+import TicketsUsagesRoute from "./routes/TicketUsageRoute.js";
 import fishingRoutes from "./routes/FishingSpotRoute.js";
 import UsersRoutes from "./routes/UsersRoute.js";
 import TicketsRoute from "./routes/TicketsRoute.js";

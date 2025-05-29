@@ -139,6 +139,61 @@ const TicketsController = {
       });
     }
   },
+  BuyTickets: async (req, res, next) => {
+    const userId = req.user?.id;
+    try {
+      if (!userId) {
+        return res.status(401).json({
+          message: "Unauthorized, token tidak valid",
+        });
+      }
+
+      const { fishing_spot_id, duration_minutes } = req.body;
+
+      if (!fishing_spot_id) {
+        return res.status(400).json({
+          message: "fishing_spot_id wajib diisi",
+        });
+      }
+
+      // Generate ticket_code unik (misal timestamp + random angka)
+      const ticket_code = `TICK-${Date.now().toString().slice(-1)}-${Math.floor(
+        Math.random() * 1000
+      )}`;
+
+      // Set valid_date hari ini (bisa disesuaikan)
+      const valid_date = new Date();
+
+      // Set status default
+      const status = "unused";
+
+      // Jika duration_minutes tidak dikirim, set default 60 menit
+      const duration = duration_minutes || 60;
+
+      // Buat tiket baru di database
+      const newTicket = await prisma.tickets.create({
+        data: {
+          ticket_code,
+          fishing_spot_id,
+          valid_date,
+          status,
+          duration_minutes: duration,
+          user_id: userId,
+          created_at: new Date(),
+        },
+      });
+
+      res
+        .status(201)
+        .json({ message: "Tiket berhasil dibeli", ticket: newTicket });
+    } catch (error) {
+      res.status(500).json({
+        status: "error",
+        message: "Gagal membeli tiket",
+        error: error.message,
+      });
+    }
+  },
 };
 
 export default TicketsController;
