@@ -10,8 +10,8 @@ export const TicketUsageSchema = Joi.object({
     "number.base": "ticket_id harus berupa angka",
     "any.required": "ticket_id wajib diisi",
   }),
-  used_at: Joi.date().required().messages({
-    "date.base": "used_at harus berupa tanggal yang valid",
+  used_at: Joi.string().required().messages({
+    "string.base": "used_at harus berupa tanggal yang valid",
     "any.required": "used_at wajib diisi",
   }),
   duration_used: Joi.number().integer().min(1).required().messages({
@@ -24,3 +24,6 @@ export const TicketUsageSchema = Joi.object({
     "any.required": "spot_used_id wajib diisi",
   }),
 });
+
+
+export default TicketUsageSchema;

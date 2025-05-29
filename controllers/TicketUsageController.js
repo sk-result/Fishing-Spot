@@ -1,6 +1,5 @@
 import prisma from "../models/prismaClient.js";
-import { TicketUsageSchema, TicketUsageSchema } from "../validator/validasi_usage.js";
-
+import TicketUsageSchema from "../validator/validasi_usage.js";
 
 const TicketUsageController = {
   getAll: async (req, res) => {
@@ -19,12 +18,16 @@ const TicketUsageController = {
   getById: async (req, res) => {
     const id = parseInt(req.params.id);
     if (isNaN(id)) {
-      return res.status(400).json({ status: "fail", message: "ID tidak valid" });
+      return res
+        .status(400)
+        .json({ status: "fail", message: "ID tidak valid" });
     }
     try {
       const species = await prisma.fish_species.findUnique({ where: { id } });
       if (!species) {
-        return res.status(404).json({ status: "fail", message: "Spesies ikan tidak ditemukan" });
+        return res
+          .status(404)
+          .json({ status: "fail", message: "Spesies ikan tidak ditemukan" });
       }
       res.json(species);
     } catch (error) {
@@ -38,15 +41,29 @@ const TicketUsageController = {
 
   create: async (req, res) => {
     try {
-      const validatedData = await TicketUsageSchema.validateAsync(req.body, { abortEarly: false });
-      const newSpecies = await prisma.fish_species.create({ data: validatedData });
+      const { error, value } = await TicketUsageSchema.validateAsync(req.body, {
+        abortEarly: false,
+      });
+      if (error) {
+        const errors = error.details.map((detail) => detail.message);
+        return res.status(400).json({ message: "Validasi gagal", errors });
+      }
+      const newSpecies = await prisma.fish_species.create({
+        data: {
+          user_id: value.user_id,
+          ticket_id: value.ticket_id,
+          used_at: new Date(value.used_at), // pastikan jadi Date jika perlu
+          duration_used: value.duration_used,
+          spot_used_id: value.spot_used_id,
+        },
+      });
       res.status(201).json(newSpecies);
     } catch (error) {
-      if (error.isJoi) {
+      if (error) {
         return res.status(400).json({
           status: "fail",
-          message: "Validasi gagal",
-          errors: error.details.map((e) => e.message),
+          message: "error",
+          error: error,
         });
       }
       res.status(500).json({
@@ -60,10 +77,14 @@ const TicketUsageController = {
   update: async (req, res) => {
     const id = parseInt(req.params.id);
     if (isNaN(id)) {
-      return res.status(400).json({ status: "fail", message: "ID tidak valid" });
+      return res
+        .status(400)
+        .json({ status: "fail", message: "ID tidak valid" });
     }
     try {
-      const validatedData = await TicketUsageSchema.validateAsync(req.body, { abortEarly: false });
+      const validatedData = await TicketUsageSchema.validateAsync(req.body, {
+        abortEarly: false,
+      });
       const updatedSpecies = await prisma.fish_species.update({
         where: { id },
         data: validatedData,
@@ -88,7 +109,9 @@ const TicketUsageController = {
   delete: async (req, res) => {
     const id = parseInt(req.params.id);
     if (isNaN(id)) {
-      return res.status(400).json({ status: "fail", message: "ID tidak valid" });
+      return res
+        .status(400)
+        .json({ status: "fail", message: "ID tidak valid" });
     }
     try {
       await prisma.fish_species.delete({ where: { id } });
