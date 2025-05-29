@@ -1,5 +1,5 @@
 import express from "express";
-import fishSpeciesRoutes from "./routes/FishSpeciesRoute.js";
+import TicketsRoute from "./routes/TicketsRoute.js";
 import fishingRoutes from "./routes/FishingSpotRoute.js";
 import UsersRoutes from "./routes/UsersRoute.js";
 import swaggerUi from "swagger-ui-express";
@@ -12,7 +12,7 @@ app.use(express.json());
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use("/api/fishing", fishingRoutes);
-app.use("/api/species", fishSpeciesRoutes);
+app.use("/api/tickets", TicketsRoute);
 app.use("/api/users", UsersRoutes);
 
 app.use((err, req, res, next) => {

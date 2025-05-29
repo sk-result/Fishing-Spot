@@ -22,12 +22,6 @@ const validasiSchema = Joi.object({
     "any.required": "Masukkan harga",
     "number.base" : "Masukkan harga dengan benar"
   }),
-  Image: Joi.string().min(0).required().messages({
-    "string.empty": "Image tidak boleh kosong ",
-    "string.min": "Masukkan image dengan benar",
-    "any.required": "Masukkan image terlebih dahulu",
-    "string.base" : "Masukkan image dengan benar"
-  }),
   status: Joi.string().valid('available', 'unavailable').required().messages({
     "string.empty": "Pilih status terlebih dahulu ",
     "any.required": "Pilih status terlebih dahulu",

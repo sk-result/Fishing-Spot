@@ -21,24 +21,15 @@ enum Role {
 }
 
 model Users {
-  id           Int      @id @default(autoincrement())
-  username     String   @unique @db.VarChar(50)
-  email        String   @unique @db.VarChar(100)
-  password     String   @db.VarChar(100)
-  role         Role     @default(user)
-  phone_number String   @db.VarChar(20)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-}
-
-model Specie {
-  id          Int      @id @default(autoincrement())
-  name        String   @db.VarChar(50)
-  description String   @db.Text()
-  createdAt   DateTime @default(now())
-  updateAt    DateTime @default(now()) @updatedAt
-
-  @@map("fish_species")
+  id           Int       @id @default(autoincrement())
+  username     String    @unique @db.VarChar(50)
+  email        String    @unique @db.VarChar(100)
+  password     String    @db.VarChar(100)
+  role         Role      @default(user)
+  phone_number String    @db.VarChar(20)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  tickets      tickets[]
 }
 
 enum Status {
@@ -47,14 +38,36 @@ enum Status {
 }
 
 model Fishing {
-  id             Int      @id @default(autoincrement())
-  name           String   @db.VarChar(50)
-  description    String   @db.Text()
-  price_per_hour Decimal  @db.Decimal()
-  image          String   @db.VarChar(100)
+  id             Int       @id @default(autoincrement())
+  name           String    @db.VarChar(50)
+  description    String    @db.Text()
+  price_per_hour Decimal   @db.Decimal()
+  image          String    @db.VarChar(100)
   status         Status
-  createdAt      DateTime @default(now())
-  updateAt       DateTime @default(now()) @updatedAt
+  createdAt      DateTime  @default(now())
+  updateAt       DateTime  @default(now()) @updatedAt
+  tickets        tickets[]
 
   @@map("fishing")
+}
+
+enum StatusTickets {
+  unused
+  used
+  expired
+}
+
+model tickets {
+  id               Int           @id @default(autoincrement())
+  user_id          Int
+  user             Users         @relation(fields: [user_id], references: [id])
+  ticket_code      String        @db.VarChar(10)
+  fishing_spot_id  Int
+  fishing_spot     Fishing       @relation(fields: [fishing_spot_id], references: [id])
+  valid_date       DateTime
+  status           StatusTickets
+  duration_minutes Int
+  created_at       DateTime      @default(now())
+
+  @@map("tickets")
 }

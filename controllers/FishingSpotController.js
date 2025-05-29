@@ -38,14 +38,18 @@ const FishingController = {
     try {
       const image = req.file ? req.file.filename : null;
       const body = req.body;
+
       const { error, value } = validasiSchema.validate(body, {
         abortEarly: false,
       });
-
       if (error) {
-        res.status(422).json({
-          error: error,
+        return res.status(422).json({
+          errors: error.details.map((detail) => detail.message),
         });
+      }
+
+      if (!image) {
+        return res.status(400).json({ message: "Gambar harus diupload" });
       }
 
       const { name, description, price_per_hour, status } = value;
@@ -59,6 +63,7 @@ const FishingController = {
           status,
         },
       });
+
       res.status(201).json(newFishing);
     } catch (error) {
       res.status(500).json({
@@ -99,9 +104,9 @@ const FishingController = {
       res.json(updatedFishing);
     } catch (error) {
       res.status(422).json({
-        status:"error",
-        message: "Proses gagal saat merubah data tempat pemancingan"
-      })
+        status: "error",
+        message: "Proses gagal saat merubah data tempat pemancingan",
+      });
     }
   },
 
