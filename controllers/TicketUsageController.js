@@ -1,6 +1,5 @@
 import prisma from "../models/prismaClient.js";
 
-
 const ticketUsageController = {
   useTicket: async (req, res) => {
     try {
@@ -25,6 +24,9 @@ const ticketUsageController = {
 
       if (ticket.status === "used") {
         return res.status(400).json({ message: "Tiket sudah digunakan" });
+      }
+      if (ticket.status_pembayaran === "paid") {
+        return res.status(400).json({ message: "Tiket belum dibayar" });
       }
 
       const now = new Date();
