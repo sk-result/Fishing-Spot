@@ -4,7 +4,7 @@ import { authenticateToken, authorizeRoles } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.post("/a" , authenticateToken, Payment.initiatePayment)
-router.post("/b" , authenticateToken, Payment.payAndGenerateTicket)
+router.post("/pembayaran" , authenticateToken, Payment.PaymentTicket)
+// router.post("/b" , authenticateToken, Payment.payAndGenerateTicket)
 
 export default router;

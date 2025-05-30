@@ -31,7 +31,6 @@ model Users {
   updatedAt    DateTime      @updatedAt
   tickets      tickets[]
   TicketUsage  TicketUsage[]
-
 }
 
 enum Status {
@@ -62,8 +61,8 @@ enum StatusTickets {
 }
 
 enum StatusPayment {
-  unused
-  used
+  unpaid
+  paid
   expired
 }
 
@@ -76,13 +75,25 @@ model tickets {
   fishing_spot      Fishing       @relation(fields: [fishing_spot_id], references: [id])
   valid_date        DateTime
   status            StatusTickets
-  status_pembayaran StatusPayment @default(unused)
+  status_pembayaran StatusPayment @default(unpaid)
   duration_minutes  Int
   created_at        DateTime      @default(now())
   TicketUsage       TicketUsage[]
   Payment           Payment[]
 
   @@map("tickets")
+}
+
+model Payment {
+  id           Int           @id @default(autoincrement())
+  ticket_id    Int           @unique // 1 payment untuk 1 tiket (bisa ubah kalau 1 tiket bisa punya beberapa payment)
+  ticket       tickets       @relation(fields: [ticket_id], references: [id])
+  amount       Float
+  payment_date DateTime      @default(now())
+  status       StatusPayment
+  created_at   DateTime      @default(now())
+
+  @@map("payments")
 }
 
 model TicketUsage {
@@ -99,17 +110,4 @@ model TicketUsage {
   fishingSpot Fishing @relation(fields: [fishingSpotId], references: [id])
 
   @@map("ticket_usages")
-}
-
-
-model Payment {
-  id          Int       @id @default(autoincrement())
-  ticket_id   Int       @unique    // 1 payment untuk 1 tiket (bisa ubah kalau 1 tiket bisa punya beberapa payment)
-  ticket      tickets   @relation(fields: [ticket_id], references: [id])
-  amount      Float
-  payment_date DateTime  @default(now())
-  status      StatusPayment
-  created_at  DateTime  @default(now())
-
-  @@map("payments")
 }
