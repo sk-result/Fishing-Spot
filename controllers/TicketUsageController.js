@@ -25,7 +25,7 @@ const ticketUsageController = {
       if (ticket.status === "used") {
         return res.status(400).json({ message: "Tiket sudah digunakan" });
       }
-      if (ticket.status_pembayaran === "paid") {
+      if (ticket.status_pembayaran === "unpaid") {
         return res.status(400).json({ message: "Tiket belum dibayar" });
       }
 
