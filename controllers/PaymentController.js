@@ -1,5 +1,6 @@
-import prisma from "../models/usersMode;.js";
+import paymentModel from "../models/paymentModel.js";
 import validasiPayment from "../validator/validasi_payment.js";
+import prismaClient from "../database/dbConfig.js";
 
 const Payment = {
   // POST /payments/initiate
@@ -13,40 +14,36 @@ const Payment = {
         });
       }
 
-      const ticket = await prisma.tickets.findFirst({
+      const ticket = await prismaClient.tickets.findFirst({
         where: { ticket_code: code },
       });
 
       if (!ticket) {
-        return res.status(400).json({
-          message: "Tiket tidak ditemukan",
-        });
+        return res.status(400).json({ message: "Tiket tidak ditemukan" });
       }
 
       if (ticket.status_pembayaran === "paid") {
-        return res.status(400).json({
-          message: "Tiket sudah dibayar",
-        });
+        return res.status(400).json({ message: "Tiket sudah dibayar" });
       }
 
-      const existingPayment = await prisma.payment.findUnique({
+      const existingPayment = await prismaClient.payment.findUnique({
         where: { ticket_id: ticket.id },
       });
+
       if (existingPayment) {
         return res.status(400).json({
           message: "Pembayaran sudah tercatat untuk tiket ini",
         });
       }
 
-      const newPayment = await prisma.payment.create({
-        data: {
-          ticket_id: ticket.id,
-          amount,
-          status: "paid",
-        },
+      // Buat pembayaran via model
+      const newPayment = await paymentModel.create({
+        ticket_id: ticket.id,
+        amount,
+        status: "paid",
       });
 
-      await prisma.tickets.update({
+      await prismaClient.tickets.update({
         where: { id: ticket.id },
         data: {
           status_pembayaran: "paid",
@@ -54,7 +51,7 @@ const Payment = {
       });
 
       return res.status(201).json({
-        message: "Pembayaran berhasil ",
+        message: "Pembayaran berhasil",
         newPayment,
       });
     } catch (error) {
@@ -63,4 +60,5 @@ const Payment = {
     }
   },
 };
+
 export default Payment;

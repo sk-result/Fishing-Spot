@@ -1,14 +1,15 @@
 import usersModel from "../models/usersModel.js";
 import validasiSchema from "../validator/validasi_user.js";
-import bcrypt, { compare } from "bcrypt";
+import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-
 import dotenv from "dotenv";
+import prismaClient from "../database/dbConfig.js"; 
+
 dotenv.config();
 const secret = process.env.JWT_SECRET;
 
 const UsersController = {
-  Register: async (req, res, next) => {
+  Register: async (req, res) => {
     try {
       const { error, value } = validasiSchema.validasiRegister.validate(
         req.body,
@@ -22,30 +23,22 @@ const UsersController = {
         return res.status(400).json({ message: "Validasi gagal", errors });
       }
 
-      // Cek apakah username sudah ada
-      const existingUsername = await prisma.users.findUnique({
+      const errors = [];
+
+      const existingUsername = await prismaClient.users.findUnique({
         where: { username: value.username },
       });
+      if (existingUsername) errors.push("Username sudah digunakan");
 
-      const errors = [];
-      if (existingUsername) {
-        errors.push("Username sudah digunakan");
-      }
-
-      // Cek apakah email sudah ada
-      const existingEmail = await prisma.users.findUnique({
+      const existingEmail = await prismaClient.users.findUnique({
         where: { email: value.email },
       });
-      if (existingEmail) {
-        errors.push("Email sudah digunakan");
-      }
+      if (existingEmail) errors.push("Email sudah digunakan");
 
-      // Jika ada error gabungan dari validasi dan pengecekan ke DB
       if (errors.length > 0) {
         return res.status(400).json({ message: "Registrasi gagal", errors });
       }
 
-      // Enkripsi password dan simpan user
       const hashedPassword = await bcrypt.hash(value.password, 10);
       const role = value.role || "user";
 
@@ -53,12 +46,11 @@ const UsersController = {
         username: value.username,
         email: value.email,
         password: hashedPassword,
-        role: role,
+        role,
         phone_number: value.phone_number,
       };
 
       const newUser = await usersModel.create(data);
-      // Sukses
       return res.status(201).json({
         id: newUser.id,
         username: newUser.username,
@@ -74,7 +66,7 @@ const UsersController = {
     }
   },
 
-  Login: async (req, res, next) => {
+  Login: async (req, res) => {
     try {
       const { value, error } = validasiSchema.validasiLogin.validate(req.body, {
         abortEarly: false,
@@ -85,17 +77,15 @@ const UsersController = {
         return res.status(400).json({ message: "Validasi gagal", errors });
       }
 
-      const user = await prisma.users.findUnique({
+      const user = await prismaClient.users.findUnique({
         where: { email: value.email },
       });
-      if (!user) return res.status(401).json({ message: "email salah" });
+      if (!user) return res.status(401).json({ message: "Email salah" });
 
-      // Cek password
       const validPassword = await bcrypt.compare(value.password, user.password);
       if (!validPassword)
         return res.status(401).json({ message: "Password salah" });
 
-      // Buat token
       const token = jwt.sign(
         {
           username: user.username,
@@ -104,9 +94,7 @@ const UsersController = {
           role: user.role,
         },
         secret,
-        {
-          expiresIn: "1h",
-        }
+        { expiresIn: "1h" }
       );
 
       return res.status(200).json({
@@ -126,15 +114,17 @@ const UsersController = {
       });
     }
   },
-  Logout: async (req, res, next) => {
-    return res.status(200).json({ message: "logout berhasil" });
+
+  Logout: async (req, res) => {
+    return res.status(200).json({ message: "Logout berhasil" });
   },
-  GetById: async (req, res, next) => {
+
+  GetById: async (req, res) => {
     const id = parseInt(req.params.id);
     try {
       const user = await usersModel.getById(id);
       if (!user) {
-        res.status(404).json({ message: "data tidak ditemukan" });
+        return res.status(404).json({ message: "Data tidak ditemukan" });
       }
       res.status(200).json({
         message: "Data",
@@ -152,13 +142,10 @@ const UsersController = {
     }
   },
 
-  GetAllAdmin: async (req, res, next) => {
+  GetAllAdmin: async (req, res) => {
     try {
-      const user = await usersModel.getAll();
-      res.status(200).json({
-        message: "data",
-        user,
-      });
+      const users = await usersModel.getAll();
+      res.status(200).json({ message: "Data", users });
     } catch (error) {
       return res.status(500).json({
         status: "error",
@@ -167,7 +154,8 @@ const UsersController = {
       });
     }
   },
-  GetAllUser: async (req, res, next) => {
+
+  GetAllUser: async (req, res) => {
     try {
       const users = await usersModel.getAll({
         select: {
@@ -189,7 +177,7 @@ const UsersController = {
     }
   },
 
-  Update: async (req, res, next) => {
+  Update: async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const { error, value } = validasiSchema.validasiRegister.validate(
@@ -198,33 +186,37 @@ const UsersController = {
           abortEarly: false,
         }
       );
+
       if (error) {
         const errors = error.details.map((detail) => detail.message);
         return res.status(400).json({ message: "Validasi gagal", errors });
       }
-      const { username, email, password, phone_number, role } = value;
 
       const hashedPassword = await bcrypt.hash(value.password, 10);
 
       const data = {
-        username,
-        email,
+        username: value.username,
+        email: value.email,
         password: hashedPassword,
-        phone_number,
-        role,
+        phone_number: value.phone_number,
+        role: value.role,
       };
+
       const newUser = await usersModel.update(id, data);
       res.json(newUser);
     } catch (err) {
-      return res.status(404).json({ message: "" });
+      return res.status(500).json({
+        message: "Gagal mengupdate user",
+        error: err.message,
+      });
     }
   },
 
-  Profile: async (req, res, next) => {
+  Profile: async (req, res) => {
     try {
       const userId = req.user.id;
 
-      const user = await prisma.users.findUnique({
+      const user = await prismaClient.users.findUnique({
         where: { id: userId },
       });
 
@@ -249,13 +241,13 @@ const UsersController = {
     }
   },
 
-  Delete: async (req, res, next) => {
+  Delete: async (req, res) => {
     const id = parseInt(req.params.id);
     try {
       await usersModel.delete(id);
       res.json({ message: "Akun telah dihapus" });
     } catch (error) {
-      res.status(404).json({ error: "Data tidak ditemukan" });
+      res.status(404).json({ message: "Data tidak ditemukan" });
     }
   },
 };

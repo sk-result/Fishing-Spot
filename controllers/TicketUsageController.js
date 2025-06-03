@@ -1,5 +1,6 @@
-import prisma from "../models/usersMode;.js";
+import usagesModel from "../models/ticketUsagesModel.js";
 import { TicketUsageSchema } from "../validator/validasi_usage.js";
+import prismaClient from "../database/dbConfig.js";
 
 const ticketUsageController = {
   useTicket: async (req, res) => {
@@ -8,6 +9,7 @@ const ticketUsageController = {
       if (error) {
         return res.status(400).json({ message: error.details[0].message });
       }
+
       const { codeTiket } = req.body;
       const userId = req.user?.id;
 
@@ -15,7 +17,7 @@ const ticketUsageController = {
         return res.status(401).json({ message: "Unauthorized" });
       }
 
-      const ticket = await prisma.tickets.findFirst({
+      const ticket = await prismaClient.tickets.findFirst({
         where: { ticket_code: codeTiket },
       });
 
@@ -37,7 +39,7 @@ const ticketUsageController = {
 
       const now = new Date();
       if (ticket.valid_date < now) {
-        await prisma.tickets.update({
+        await prismaClient.tickets.update({
           where: { id: ticket.id },
           data: { status: "expired" },
         });
@@ -45,19 +47,16 @@ const ticketUsageController = {
       }
 
       // Simpan ke ticket_usages
-      const usage = await prisma.ticketUsage.create({
-        data: {
-          userId,
-          ticketId: ticket.id,
-          // codeTiket,
-          usedAt: now,
-          durationUsed: ticket.duration_minutes,
-          fishingSpotId: ticket.fishing_spot_id,
-        },
+      const usage = await usagesModel.create({
+        userId,
+        ticketId: ticket.id,
+        usedAt: now,
+        durationUsed: ticket.duration_minutes,
+        fishingSpotId: ticket.fishing_spot_id,
       });
 
       // Update status tiket
-      await prisma.tickets.update({
+      await prismaClient.tickets.update({
         where: { id: ticket.id },
         data: { status: "used" },
       });

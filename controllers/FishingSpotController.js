@@ -1,12 +1,11 @@
-// controllers/FishingController.js
-import prisma from "../models/usersMode;.js";
+import fishingModel from "../models/fishingModel.js";
 import validasiSchema from "../validator/validasi_fishing_spot.js";
 
+
 const FishingController = {
-  // Get all fishing spots
-  getAll: async (req, res, next) => {
+  getAll: async (req, res) => {
     try {
-      const fishings = await prisma.fishing.findMany();
+      const fishings = await fishingModel.getAll();
       res.json(fishings);
     } catch (error) {
       res.status(500).json({
@@ -17,12 +16,12 @@ const FishingController = {
     }
   },
 
-  // Get fishing by ID
-  getById: async (req, res, next) => {
+  getById: async (req, res) => {
     const id = parseInt(req.params.id);
     try {
-      const fishing = await prisma.fishing.findUnique({ where: { id } });
-      if (!fishing) return res.status(404).json({ error: "Fishing not found" });
+      const fishing = await fishingModel.getById(id);
+      if (!fishing)
+        return res.status(404).json({ error: "Fishing spot not found" });
       res.json(fishing);
     } catch (error) {
       res.status(500).json({
@@ -33,15 +32,13 @@ const FishingController = {
     }
   },
 
-  // Create a new fishing spot
-  create: async (req, res, next) => {
+  create: async (req, res) => {
     try {
       const image = req.file ? req.file.filename : null;
-      const body = req.body;
-
-      const { error, value } = validasiSchema.validate(body, {
+      const { error, value } = validasiSchema.validate(req.body, {
         abortEarly: false,
       });
+
       if (error) {
         const errors = error.details.map((detail) => detail.message);
         return res.status(400).json({ message: "Validasi gagal", errors });
@@ -52,17 +49,15 @@ const FishingController = {
       }
 
       const { name, description, price_per_hour, status } = value;
+      const data = {
+        name,
+        description,
+        price_per_hour: parseFloat(price_per_hour),
+        image,
+        status,
+      };
 
-      const newFishing = await prisma.fishing.create({
-        data: {
-          name,
-          description,
-          price_per_hour: parseFloat(price_per_hour),
-          image,
-          status,
-        },
-      });
-
+      const newFishing = await fishingModel.create(data);
       res.status(201).json(newFishing);
     } catch (error) {
       res.status(500).json({
@@ -73,13 +68,10 @@ const FishingController = {
     }
   },
 
-  // Update fishing spot
-  update: async (req, res, next) => {
+  update: async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      const image = req.file ? req.file.filename : null;
-      const body = req.body;
-      const { error, value } = validasiSchema.validate(body, {
+      const { error, value } = validasiSchema.validate(req.body, {
         abortEarly: false,
       });
 
@@ -87,35 +79,49 @@ const FishingController = {
         const errors = error.details.map((detail) => detail.message);
         return res.status(400).json({ message: "Validasi gagal", errors });
       }
-      const { name, description, price_per_hour, status } = value;
 
-      const updatedFishing = await prisma.fishing.update({
-        where: { id },
-        data: {
-          name,
-          description,
-          price_per_hour: parseFloat(price_per_hour),
-          image,
-          status,
-        },
-      });
+      const { name, description, price_per_hour, status } = value;
+      const data = {
+        name,
+        description,
+        price_per_hour: parseFloat(price_per_hour),
+        status,
+      };
+
+      if (req.file) {
+        data.image = req.file.filename;
+      }
+
+      const updatedFishing = await fishingModel.update(id, data);
       res.json(updatedFishing);
     } catch (error) {
-      res.status(422).json({
+      res.status(500).json({
         status: "error",
         message: "Proses gagal saat merubah data tempat pemancingan",
+        error: error.message,
       });
     }
   },
 
-  // Delete fishing spot
-  delete: async (req, res, next) => {
+  delete: async (req, res) => {
     const id = parseInt(req.params.id);
     try {
-      await prisma.fishing.delete({ where: { id } });
-      res.json({ message: "Tempat pemancingan berhasil di hapus" });
+      const fishing = await fishingModel.getById(id);
+      if (!fishing) {
+        return res
+          .status(404)
+          .json({ message: "Tempat pemancingan tidak ditemukan" });
+      }
+
+      await fishingModel.delete(id);
+      res.json({ message: "Tempat pemancingan berhasil dihapus" });
     } catch (error) {
-      res.status(404).json({ error: "Gagal menghapus tempat pemancingan" });
+      res
+        .status(500)
+        .json({
+          error: "Gagal menghapus tempat pemancingan",
+          detail: error.message,
+        });
     }
   },
 };

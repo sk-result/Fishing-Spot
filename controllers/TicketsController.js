@@ -1,10 +1,11 @@
-import prisma from "../models/usersMode;.js";
+import ticketsModel from "../models/ticketsModel.js";
 import validasiSchema from "../validator/validasi_tickets.js";
+import prismaClient from "../database/dbConfig.js";
 
 const TicketsController = {
-  GetAll: async (req, res, next) => {
+  GetAll: async (req, res) => {
     try {
-      const tickets = await prisma.tickets.findMany();
+      const tickets = await ticketsModel.getAll();
       res.json(tickets);
     } catch (error) {
       res.status(500).json({
@@ -15,13 +16,13 @@ const TicketsController = {
     }
   },
 
-  GetById: async (req, res, next) => {
+  GetById: async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       if (isNaN(id))
         return res.status(400).json({ message: "ID tiket tidak valid" });
 
-      const ticket = await prisma.tickets.findUnique({ where: { id } });
+      const ticket = await ticketsModel.getById(id);
       if (!ticket) {
         return res.status(404).json({ message: "Tiket tidak ditemukan" });
       }
@@ -36,10 +37,9 @@ const TicketsController = {
     }
   },
 
-  create: async (req, res, next) => {
+  create: async (req, res) => {
     try {
-      const body = req.body;
-      const { error, value } = validasiSchema.validate(body, {
+      const { error, value } = validasiSchema.validate(req.body, {
         abortEarly: false,
       });
 
@@ -56,8 +56,7 @@ const TicketsController = {
           .json({ message: "Unauthorized, token tidak valid" });
       }
 
-      // Ambil data fishing spot (harga per jam)
-      const fishingSpot = await prisma.fishing.findUnique({
+      const fishingSpot = await prismaClient.fishing.findUnique({
         where: { id: value.fishing_spot_id },
       });
 
@@ -67,7 +66,7 @@ const TicketsController = {
           .json({ message: "Spot memancing tidak ditemukan" });
       }
 
-      const pricePerHour = Number(fishingSpot.price_per_hour); // Decimal harus di-convert ke Number
+      const pricePerHour = Number(fishingSpot.price_per_hour);
       const duration = value.duration_minutes || 60;
       const totalPrice = (pricePerHour * duration) / 60;
 
@@ -76,21 +75,19 @@ const TicketsController = {
       )}`;
       const valid_date = new Date();
       valid_date.setDate(valid_date.getDate() + 3);
-      const status = "unused";
-      const status_pembayaran = "unpaid";
 
-      const newTicket = await prisma.tickets.create({
-        data: {
-          ticket_code,
-          fishing_spot_id: value.fishing_spot_id,
-          valid_date,
-          status,
-          status_pembayaran,
-          duration_minutes: duration,
-          user_id: userId,
-          created_at: new Date(),
-        },
-      });
+      const data = {
+        ticket_code,
+        fishing_spot_id: value.fishing_spot_id,
+        valid_date,
+        status: "unused",
+        status_pembayaran: "unpaid",
+        duration_minutes: duration,
+        user_id: userId,
+        created_at: new Date(),
+      };
+
+      const newTicket = await ticketsModel.create(data);
 
       res.status(201).json({
         message: "Tiket berhasil dibuat",
@@ -98,8 +95,8 @@ const TicketsController = {
           code: newTicket.ticket_code,
           name: username,
           payment_expired: newTicket.valid_date,
-          status,
-          status_pembayaran,
+          status: newTicket.status,
+          status_pembayaran: newTicket.status_pembayaran,
           amount: totalPrice,
         },
       });
@@ -112,12 +109,10 @@ const TicketsController = {
     }
   },
 
-  update: async (req, res, next) => {
+  update: async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-
-      const body = req.body;
-      const { error, value } = validasiSchema.validate(body, {
+      const { error, value } = validasiSchema.validate(req.body, {
         abortEarly: false,
       });
 
@@ -128,8 +123,8 @@ const TicketsController = {
 
       const userId = req.user?.id;
       const username = req.user?.username;
-      // Ambil data fishing spot (harga per jam)
-      const fishingSpot = await prisma.fishing.findUnique({
+
+      const fishingSpot = await prismaClient.fishing.findUnique({
         where: { id: value.fishing_spot_id },
       });
 
@@ -139,60 +134,56 @@ const TicketsController = {
           .json({ message: "Spot memancing tidak ditemukan" });
       }
 
-      const pricePerHour = Number(fishingSpot.price_per_hour); // Decimal harus di-convert ke Number
+      const pricePerHour = Number(fishingSpot.price_per_hour);
       const duration = value.duration_minutes || 60;
       const totalPrice = (pricePerHour * duration) / 60;
 
       const valid_date = new Date();
       valid_date.setDate(valid_date.getDate() + 7);
-      const status = "unused";
 
-      const newTicket = await prisma.tickets.update({
-        where: { id },
-        data: {
-          // ticket_code,
-          fishing_spot_id: value.fishing_spot_id,
-          valid_date,
-          status,
-          duration_minutes: duration,
-          user_id: userId,
-          created_at: new Date(),
-        },
-      });
+      const data = {
+        fishing_spot_id: value.fishing_spot_id,
+        valid_date,
+        status: "unused",
+        duration_minutes: duration,
+        user_id: userId,
+        created_at: new Date(),
+      };
 
-      res.status(201).json({
-        message: "Tiket berhasil dibuat",
+      const updatedTicket = await ticketsModel.update(id, data);
+
+      res.status(200).json({
+        message: "Tiket berhasil diperbarui",
         data: {
-          code: newTicket.ticket_code,
+          code: updatedTicket.ticket_code,
           name: username,
-          valid_until: newTicket.valid_date,
-          duration_minutes: duration,
-
-          status,
+          valid_until: updatedTicket.valid_date,
+          duration_minutes: updatedTicket.duration_minutes,
+          status: updatedTicket.status,
           amount: totalPrice,
         },
       });
     } catch (error) {
       res.status(500).json({
         status: "error",
-        message: "Gagal membuat tiket",
+        message: "Gagal memperbarui tiket",
         error: error.message,
       });
     }
   },
 
-  delete: async (req, res, next) => {
+  delete: async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       if (isNaN(id))
         return res.status(400).json({ message: "ID tiket tidak valid" });
 
-      const existing = await prisma.tickets.findUnique({ where: { id } });
+      const existing = await ticketsModel.getById(id);
       if (!existing) {
         return res.status(404).json({ message: "Tiket tidak ditemukan." });
       }
 
-      await prisma.tickets.delete({ where: { id } });
+      await ticketsModel.delete(id);
       res.status(200).json({ message: "Tiket telah dihapus" });
     } catch (error) {
       res.status(500).json({
@@ -203,7 +194,7 @@ const TicketsController = {
     }
   },
 
-  cetakTicket: async (req, res, next) => {
+  cetakTicket: async (req, res) => {
     try {
       const { ticket_code } = req.body;
       const userId = req.user?.id;
@@ -219,7 +210,7 @@ const TicketsController = {
         return res.status(400).json({ message: "Kode tiket wajib diisi" });
       }
 
-      const ticket = await prisma.tickets.findFirst({
+      const ticket = await prismaClient.tickets.findFirst({
         where: {
           ticket_code,
           user_id: userId,
@@ -241,15 +232,12 @@ const TicketsController = {
           .json({ message: "Tiket belum dibayar, tidak bisa dicetak" });
       }
 
-      // Set valid date menjadi hari ini + 7
       const valid_date = new Date();
       valid_date.setDate(valid_date.getDate() + 7);
 
-      const updatedTicket = await prisma.tickets.update({
+      const updatedTicket = await prismaClient.tickets.update({
         where: { id: ticket.id },
-        data: {
-          valid_date,
-        },
+        data: { valid_date },
       });
 
       res.status(200).json({
