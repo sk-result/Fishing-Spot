@@ -77,6 +77,7 @@ const TicketsController = {
       const valid_date = new Date();
       valid_date.setDate(valid_date.getDate() + 3);
       const status = "unused";
+      const status_pembayaran = "unpaid";
 
       const newTicket = await prisma.tickets.create({
         data: {
@@ -84,6 +85,7 @@ const TicketsController = {
           fishing_spot_id: value.fishing_spot_id,
           valid_date,
           status,
+          status_pembayaran,
           duration_minutes: duration,
           user_id: userId,
           created_at: new Date(),
@@ -97,6 +99,7 @@ const TicketsController = {
           name: username,
           payment_expired: newTicket.valid_date,
           status,
+          status_pembayaran,
           amount: totalPrice,
         },
       });

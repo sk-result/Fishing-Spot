@@ -1,17 +1,22 @@
 import prisma from "../models/prismaClient.js";
+import { TicketUsageSchema } from "../validator/validasi_usage.js";
 
 const ticketUsageController = {
   useTicket: async (req, res) => {
     try {
-      const { ticketId } = req.body;
+      const { error } = TicketUsageSchema.validate(req.body);
+      if (error) {
+        return res.status(400).json({ message: error.details[0].message });
+      }
+      const { codeTiket } = req.body;
       const userId = req.user?.id;
 
       if (!userId) {
         return res.status(401).json({ message: "Unauthorized" });
       }
 
-      const ticket = await prisma.tickets.findUnique({
-        where: { id: ticketId },
+      const ticket = await prisma.tickets.findFirst({
+        where: { ticket_code: codeTiket },
       });
 
       if (!ticket) {
@@ -25,6 +30,7 @@ const ticketUsageController = {
       if (ticket.status === "used") {
         return res.status(400).json({ message: "Tiket sudah digunakan" });
       }
+
       if (ticket.status_pembayaran === "unpaid") {
         return res.status(400).json({ message: "Tiket belum dibayar" });
       }
@@ -32,39 +38,37 @@ const ticketUsageController = {
       const now = new Date();
       if (ticket.valid_date < now) {
         await prisma.tickets.update({
-          where: { id: ticketId },
+          where: { id: ticket.id },
           data: { status: "expired" },
         });
         return res.status(400).json({ message: "Tiket sudah kedaluwarsa" });
       }
 
-      // Hitung durasi penggunaan jika dibutuhkan
-      const durationUsed = ticket.duration_minutes; // Atau bisa dihitung real time
-
       // Simpan ke ticket_usages
       const usage = await prisma.ticketUsage.create({
         data: {
           userId,
-          ticketId,
+          ticketId: ticket.id,
+          // codeTiket,
           usedAt: now,
-          durationUsed,
+          durationUsed: ticket.duration_minutes,
           fishingSpotId: ticket.fishing_spot_id,
         },
       });
 
-      // Update status tiket ke 'used'
+      // Update status tiket
       await prisma.tickets.update({
-        where: { id: ticketId },
+        where: { id: ticket.id },
         data: { status: "used" },
       });
 
       res.status(200).json({
         message: "Tiket berhasil digunakan",
+        ticket_code: ticket.ticket_code,
         usage,
       });
     } catch (error) {
       res.status(500).json({
-        status: "error",
         message: "Gagal menggunakan tiket",
         error: error.message,
       });
