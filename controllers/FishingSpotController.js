@@ -1,5 +1,5 @@
 // controllers/FishingController.js
-import prisma from "../models/prismaClient.js";
+import prisma from "../models/usersMode;.js";
 import validasiSchema from "../validator/validasi_fishing_spot.js";
 
 const FishingController = {

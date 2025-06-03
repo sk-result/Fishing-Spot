@@ -1,4 +1,4 @@
-import prisma from "../models/prismaClient.js";
+import prisma from "../models/usersMode;.js";
 import validasiPayment from "../validator/validasi_payment.js";
 
 const Payment = {

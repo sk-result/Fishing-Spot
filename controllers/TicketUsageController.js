@@ -1,4 +1,4 @@
-import prisma from "../models/prismaClient.js";
+import prisma from "../models/usersMode;.js";
 import { TicketUsageSchema } from "../validator/validasi_usage.js";
 
 const ticketUsageController = {

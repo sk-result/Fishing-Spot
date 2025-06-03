@@ -1,4 +1,4 @@
-import prisma from "../models/prismaClient.js";
+import usersModel from "../models/usersModel.js";
 import validasiSchema from "../validator/validasi_user.js";
 import bcrypt, { compare } from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -49,16 +49,15 @@ const UsersController = {
       const hashedPassword = await bcrypt.hash(value.password, 10);
       const role = value.role || "user";
 
-      const newUser = await prisma.users.create({
-        data: {
-          username: value.username,
-          email: value.email,
-          password: hashedPassword,
-          role: role,
-          phone_number: value.phone_number,
-        },
-      });
+      const data = {
+        username: value.username,
+        email: value.email,
+        password: hashedPassword,
+        role: role,
+        phone_number: value.phone_number,
+      };
 
+      const newUser = await usersModel.create(data);
       // Sukses
       return res.status(201).json({
         id: newUser.id,
@@ -98,7 +97,12 @@ const UsersController = {
 
       // Buat token
       const token = jwt.sign(
-        {username: user.username, id: user.id, email: user.email, role: user.role },
+        {
+          username: user.username,
+          id: user.id,
+          email: user.email,
+          role: user.role,
+        },
         secret,
         {
           expiresIn: "1h",
@@ -128,9 +132,7 @@ const UsersController = {
   GetById: async (req, res, next) => {
     const id = parseInt(req.params.id);
     try {
-      const user = await prisma.users.findUnique({
-        where: { id },
-      });
+      const user = await usersModel.getById(id);
       if (!user) {
         res.status(404).json({ message: "data tidak ditemukan" });
       }
@@ -152,7 +154,7 @@ const UsersController = {
 
   GetAllAdmin: async (req, res, next) => {
     try {
-      const user = await prisma.users.findMany();
+      const user = await usersModel.getAll();
       res.status(200).json({
         message: "data",
         user,
@@ -167,7 +169,7 @@ const UsersController = {
   },
   GetAllUser: async (req, res, next) => {
     try {
-      const users = await prisma.users.findMany({
+      const users = await usersModel.getAll({
         select: {
           username: true,
           phone_number: true,
@@ -204,17 +206,15 @@ const UsersController = {
 
       const hashedPassword = await bcrypt.hash(value.password, 10);
 
-      const user = await prisma.users.update({
-        where: { id },
-        data: {
-          username,
-          email,
-          password: hashedPassword,
-          phone_number,
-          role,
-        },
-      });
-      res.json(user);
+      const data = {
+        username,
+        email,
+        password: hashedPassword,
+        phone_number,
+        role,
+      };
+      const newUser = await usersModel.update(id, data);
+      res.json(newUser);
     } catch (err) {
       return res.status(404).json({ message: "" });
     }
@@ -252,7 +252,7 @@ const UsersController = {
   Delete: async (req, res, next) => {
     const id = parseInt(req.params.id);
     try {
-      await prisma.users.delete({ where: { id } });
+      await usersModel.delete(id);
       res.json({ message: "Akun telah dihapus" });
     } catch (error) {
       res.status(404).json({ error: "Data tidak ditemukan" });

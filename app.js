@@ -5,15 +5,10 @@ import UsersRoutes from "./routes/UsersRoute.js";
 import TicketsRoute from "./routes/TicketsRoute.js";
 import PaymentRoute from "./routes/PaymentRoute.js";
 
-import swaggerUi from "swagger-ui-express";
-import YAML from "yamljs";
-
 const app = express();
 
-const swaggerDocument = YAML.load("./swagger.yaml");
 app.use(express.json());
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use("/api/fishing", fishingRoutes);
 app.use("/api/tickets", TicketsRoute);
