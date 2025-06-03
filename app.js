@@ -4,6 +4,7 @@ import fishingRoutes from "./routes/FishingSpotRoute.js";
 import UsersRoutes from "./routes/UsersRoute.js";
 import TicketsRoute from "./routes/TicketsRoute.js";
 import PaymentRoute from "./routes/PaymentRoute.js";
+import ReviewRoute from "./routes/ReviewRoute.js";
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use("/api/tickets", TicketsRoute);
 app.use("/api/usages", TicketsUsagesRoute);
 app.use("/api/users", UsersRoutes);
 app.use("/api/payment", PaymentRoute);
+app.use("/api/review", ReviewRoute);
 
 
 app.use((err, req, res, next) => {
