@@ -31,6 +31,7 @@ model Users {
   updatedAt    DateTime      @updatedAt
   tickets      tickets[]
   TicketUsage  TicketUsage[]
+  Review       Review[]
 }
 
 enum Status {
@@ -50,6 +51,7 @@ model Fishing {
 
   tickets      tickets[]
   ticketUsages TicketUsage[] // tambahkan ini
+  Review       Review[]
 
   @@map("fishing")
 }
@@ -110,4 +112,18 @@ model TicketUsage {
   fishingSpot Fishing @relation(fields: [fishingSpotId], references: [id])
 
   @@map("ticket_usages")
+}
+
+model Review {
+  id              Int      @id @default(autoincrement())
+  user_id         Int
+  fishing_spot_id Int
+  rating          Int
+  comment         String
+  created_at      DateTime @default(now())
+
+  user        Users   @relation(fields: [user_id], references: [id])
+  fishingSpot Fishing @relation(fields: [fishing_spot_id], references: [id])
+
+  @@map("review")
 }

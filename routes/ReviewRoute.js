@@ -8,3 +8,4 @@ router.get("/spot/:spotId", ReviewController.getBySpotId);
 router.post("/create", ReviewController.create); 
 
 export default router;
+    
