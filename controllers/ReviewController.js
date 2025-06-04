@@ -25,22 +25,25 @@ const ReviewController = {
         where: { id: value.fishing_spot_id },
       });
 
-      if(!fishingSpot){
+      if (!fishingSpot) {
         return res.status(404).json({
-          message : "Tempat pemancingan tidak ditemukan"
-        })
+          message: "Tempat pemancingan tidak ditemukan",
+        });
       }
 
       const newReview = await prisma.review.create({
         data: {
-          user_id : userId,
+          user_id: userId,
           fishing_spot_id: value.fishing_spot_id,
           rating: value.rating,
           comment: value.comment,
         },
       });
 
-      res.status(201).json( newReview );
+      res.status(201).json({
+        name: username,
+        data: newReview,
+      });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: error.message });
