@@ -1,39 +1,49 @@
 import prisma from "../database/dbConfig.js";
-import reviewSchema from "../validator/validasi_review.js"
-
+import reviewSchema from "../validator/validasi_review.js";
 
 const ReviewController = {
   // ✍️ Create new Review
   create: async (req, res) => {
     try {
-      const { error, value } = reviewSchema.validate(req.body , {
-        abortEarly : false,
+      const { error, value } = reviewSchema.validate(req.body, {
+        abortEarly: false,
       });
 
-      if(error){
+      if (error) {
         const errors = error.details.map((detail) => detail.message);
         return res.status(400).json({ message: "Validasi gagal", errors });
       }
 
-      // Validasi input
-      if (!userId || !fishingSpotId || !rating) {
-        return res.status(400).json({ error: "userId, fishingSpotId, and rating are required" });
+      const userId = req.user?.id;
+      const username = req.user?.username;
+      if (!userId) {
+        return res
+          .status(401)
+          .json({ message: "Unauthorized, token tidak valid" });
       }
+      const fishingSpot = await prisma.fishing.findUnique({
+        where: { id: value.fishing_spot_id },
+      });
 
+      if(!fishingSpot){
+        return res.status(404).json({
+          message : "Tempat pemancingan tidak ditemukan"
+        })
+      }
 
       const newReview = await prisma.review.create({
         data: {
-          userId,
-          fishing_spot_id: fishingSpotId,
-          rating,
-          comment,
+          user_id : userId,
+          fishing_spot_id: value.fishing_spot_id,
+          rating: value.rating,
+          comment: value.comment,
         },
       });
 
-      res.status(201).json(newReview);
+      res.status(201).json( newReview );
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: "Internal server error" });
+      res.status(500).json({ error: error.message });
     }
   },
 

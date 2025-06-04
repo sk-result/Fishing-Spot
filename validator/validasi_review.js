@@ -5,10 +5,10 @@ export const reviewSchema = Joi.object({
     'number.base': `"fishing_spot_id" harus berupa angka`,
     'any.required': `"fishing_spot_id" wajib diisi`
   }),
-  user_id: Joi.number().integer().required().messages({
-    'number.base': `"user_id" harus berupa angka`,
-    'any.required': `"user_id" wajib diisi`
-  }),
+  // user_id: Joi.number().integer().required().messages({
+  //   'number.base': `"user_id" harus berupa angka`,
+  //   'any.required': `"user_id" wajib diisi`
+  // }),
   rating: Joi.number().integer().min(1).max(5).required().messages({
     'number.base': `"rating" harus berupa angka`,
     'number.min': `"rating" minimal 1`,
@@ -22,3 +22,5 @@ export const reviewSchema = Joi.object({
     'any.required': `"comment" wajib diisi`
   }),
 });
+
+export default reviewSchema;
