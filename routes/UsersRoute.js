@@ -10,15 +10,13 @@ router.post("/login", Users.Login);
 router.post("/logout", Users.Logout);
 
 router.get("/me", authenticateToken, Users.Profile);
-
-router.get("/", authenticateToken, authorizeRoles("admin"), Users.GetAllUser);
-
+router.get("/profilUserAll", Users.GetAllUser); // publik
 router.get(
-  "/admins",
+  "/profilAdminAll",
   authenticateToken,
   authorizeRoles("admin"),
   Users.GetAllAdmin
-);
+); // hanya admin
 
 router.get("/:id", authenticateToken, Users.GetById);
 
