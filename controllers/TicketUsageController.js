@@ -1,6 +1,6 @@
 import usagesModel from "../models/ticketUsagesModel.js";
+import ticketsModel from "../models/ticketsModel.js"; // import model tiket
 import { TicketUsageSchema } from "../validator/validasi_usage.js";
-import prismaClient from "../database/dbConfig.js";
 
 const ticketUsageController = {
   useTicket: async (req, res) => {
@@ -17,9 +17,7 @@ const ticketUsageController = {
         return res.status(401).json({ message: "Unauthorized" });
       }
 
-      const ticket = await prismaClient.tickets.findFirst({
-        where: { ticket_code: codeTiket },
-      });
+      const ticket = await ticketsModel.findByCode(codeTiket);
 
       if (!ticket) {
         return res.status(404).json({ message: "Tiket tidak ditemukan" });
@@ -39,10 +37,7 @@ const ticketUsageController = {
 
       const now = new Date();
       if (ticket.valid_date < now) {
-        await prismaClient.tickets.update({
-          where: { id: ticket.id },
-          data: { status: "expired" },
-        });
+        await ticketsModel.updateStatus(ticket.id, "expired");
         return res.status(400).json({ message: "Tiket sudah kedaluwarsa" });
       }
 
@@ -55,11 +50,8 @@ const ticketUsageController = {
         fishingSpotId: ticket.fishing_spot_id,
       });
 
-      // Update status tiket
-      await prismaClient.tickets.update({
-        where: { id: ticket.id },
-        data: { status: "used" },
-      });
+      // Update status tiket jadi "used"
+      await ticketsModel.updateStatus(ticket.id, "used");
 
       res.status(200).json({
         message: "Tiket berhasil digunakan",

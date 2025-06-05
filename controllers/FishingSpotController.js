@@ -1,7 +1,6 @@
 import fishingModel from "../models/fishingModel.js";
 import validasiSchema from "../validator/validasi_fishing_spot.js";
 
-
 const FishingController = {
   getAll: async (req, res) => {
     try {
