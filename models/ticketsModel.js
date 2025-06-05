@@ -32,6 +32,40 @@ const ticketsModel = {
       where: { id: Number(id) },
     });
   },
+  getFishingSpotById: async (fishing_spot_id) => {
+    return await prismaClient.fishing.findUnique({
+      where: { id: fishing_spot_id },
+    });
+  },
+  // dalam createTicketsModel di ticketsModel.js
+  cetakTicketByCode: async (ticket_code, user_id) => {
+    const ticket = await prismaClient.tickets.findFirst({
+      where: {
+        ticket_code,
+        user_id,
+      },
+      include: {
+        fishing_spot: true,
+      },
+    });
+
+    if (!ticket) return null;
+
+    if (ticket.status_pembayaran !== "paid") return "unpaid";
+
+    const valid_date = new Date();
+    valid_date.setDate(valid_date.getDate() + 7);
+
+    const updated = await prismaClient.tickets.update({
+      where: { id: ticket.id },
+      data: { valid_date },
+    });
+
+    return {
+      ...updated,
+      fishing_spot: ticket.fishing_spot,
+    };
+  },
 };
 
 export default ticketsModel;

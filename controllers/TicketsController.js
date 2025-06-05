@@ -1,6 +1,5 @@
 import ticketsModel from "../models/ticketsModel.js";
 import validasiSchema from "../validator/validasi_tickets.js";
-import prismaClient from "../database/dbConfig.js";
 
 const TicketsController = {
   GetAll: async (req, res) => {
@@ -56,9 +55,7 @@ const TicketsController = {
           .json({ message: "Unauthorized, token tidak valid" });
       }
 
-      const fishingSpot = await prismaClient.fishing.findUnique({
-        where: { id: value.fishing_spot_id },
-      });
+      const fishingSpot = await ticketsModel.getFishingSpotById(value.fishing_spot_id);
 
       if (!fishingSpot) {
         return res
@@ -124,9 +121,7 @@ const TicketsController = {
       const userId = req.user?.id;
       const username = req.user?.username;
 
-      const fishingSpot = await prismaClient.fishing.findUnique({
-        where: { id: value.fishing_spot_id },
-      });
+      const fishingSpot = await ticketsModel.getFishingSpotById(value.fishing_spot_id);
 
       if (!fishingSpot) {
         return res
@@ -210,49 +205,32 @@ const TicketsController = {
         return res.status(400).json({ message: "Kode tiket wajib diisi" });
       }
 
-      const ticket = await prismaClient.tickets.findFirst({
-        where: {
-          ticket_code,
-          user_id: userId,
-        },
-        include: {
-          fishing_spot: true,
-        },
-      });
+      const result = await ticketsModel.cetakTicketByCode(ticket_code, userId);
 
-      if (!ticket) {
+      if (!result) {
         return res
           .status(404)
           .json({ message: "Tiket tidak ditemukan atau bukan milik Anda" });
       }
 
-      if (ticket.status_pembayaran !== "paid") {
+      if (result === "unpaid") {
         return res
           .status(403)
           .json({ message: "Tiket belum dibayar, tidak bisa dicetak" });
       }
 
-      const valid_date = new Date();
-      valid_date.setDate(valid_date.getDate() + 7);
-
-      const updatedTicket = await prismaClient.tickets.update({
-        where: { id: ticket.id },
-        data: { valid_date },
-      });
-
       res.status(200).json({
         message: "Tiket berhasil dicetak",
         data: {
-          code: updatedTicket.ticket_code,
+          code: result.ticket_code,
           name: username,
-          valid_until: updatedTicket.valid_date,
-          status: updatedTicket.status,
-          duration: updatedTicket.duration_minutes,
-          spot: ticket.fishing_spot?.name,
+          valid_until: result.valid_date,
+          status: result.status,
+          duration: result.duration_minutes,
+          spot: result.fishing_spot?.name,
         },
       });
     } catch (error) {
-      console.error("cetakTicket error:", error);
       res.status(500).json({
         message: "Terjadi kesalahan saat mencetak tiket",
         error: error.message,
