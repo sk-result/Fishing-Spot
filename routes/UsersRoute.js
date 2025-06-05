@@ -4,21 +4,25 @@ import { authenticateToken, authorizeRoles } from "../middleware/auth.js";
 
 const router = express.Router();
 
+// Auth
 router.post("/register", Users.Register);
 router.post("/login", Users.Login);
 router.post("/logout", Users.Logout);
-router.get("/profil/:id", Users.GetById);
-router.get("/myprofil", authenticateToken, Users.Profile);
-router.get("/profilUserAll", Users.GetAllUser);
+
+router.get("/me", authenticateToken, Users.Profile);
+
+router.get("/", authenticateToken, authorizeRoles("admin"), Users.GetAllUser);
 
 router.get(
-  "/profilAdminAll",
+  "/admins",
   authenticateToken,
   authorizeRoles("admin"),
   Users.GetAllAdmin
 );
 
-router.put("/update/:id", Users.Update);
-router.delete("/delete/:id", Users.Delete);
+router.get("/:id", authenticateToken, Users.GetById);
+
+router.put("/:id", authenticateToken, Users.Update);
+router.delete("/:id", authenticateToken, Users.Delete);
 
 export default router;

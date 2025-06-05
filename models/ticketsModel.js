@@ -66,6 +66,18 @@ const ticketsModel = {
       fishing_spot: ticket.fishing_spot,
     };
   },
+
+  findByCode: async (code) => {
+    return await prismaClient.tickets.findFirst({
+      where: { ticket_code: code },
+    });
+  },
+  updatePaymentStatus: async (id, status_pembayaran) => {
+    return await prismaClient.tickets.update({
+      where: { id: id },
+      data: { status_pembayaran },
+    });
+  },
 };
 
 export default ticketsModel;

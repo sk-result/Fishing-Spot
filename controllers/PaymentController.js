@@ -1,9 +1,8 @@
 import paymentModel from "../models/paymentModel.js";
+import ticketsModel from "../models/ticketsModel.js";
 import validasiPayment from "../validator/validasi_payment.js";
-import prismaClient from "../database/dbConfig.js";
 
 const Payment = {
-  // POST /payments/initiate
   PaymentTicket: async (req, res) => {
     try {
       const { code, amount } = req.body;
@@ -14,9 +13,7 @@ const Payment = {
         });
       }
 
-      const ticket = await prismaClient.tickets.findFirst({
-        where: { ticket_code: code },
-      });
+      const ticket = await ticketsModel.findByCode(code);
 
       if (!ticket) {
         return res.status(400).json({ message: "Tiket tidak ditemukan" });
@@ -26,9 +23,7 @@ const Payment = {
         return res.status(400).json({ message: "Tiket sudah dibayar" });
       }
 
-      const existingPayment = await prismaClient.payment.findUnique({
-        where: { ticket_id: ticket.id },
-      });
+      const existingPayment = await paymentModel.getByTicketId(ticket.id);
 
       if (existingPayment) {
         return res.status(400).json({
@@ -36,19 +31,13 @@ const Payment = {
         });
       }
 
-      // Buat pembayaran via model
       const newPayment = await paymentModel.create({
         ticket_id: ticket.id,
         amount,
         status: "paid",
       });
 
-      await prismaClient.tickets.update({
-        where: { id: ticket.id },
-        data: {
-          status_pembayaran: "paid",
-        },
-      });
+      await ticketsModel.updatePaymentStatus(ticket.id, "paid");
 
       return res.status(201).json({
         message: "Pembayaran berhasil",

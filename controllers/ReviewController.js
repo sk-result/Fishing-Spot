@@ -1,8 +1,8 @@
-import prisma from "../database/dbConfig.js";
 import reviewSchema from "../validator/validasi_review.js";
+import reviewModel from "../models/reviewModel.js";
+import prisma from "../database/dbConfig.js"; // masih dibutuhkan untuk cek spot
 
 const ReviewController = {
-  // ✍️ Create new Review
   create: async (req, res) => {
     try {
       const { error, value } = reviewSchema.validate(req.body, {
@@ -21,6 +21,7 @@ const ReviewController = {
           .status(401)
           .json({ message: "Unauthorized, token tidak valid" });
       }
+
       const fishingSpot = await prisma.fishing.findUnique({
         where: { id: value.fishing_spot_id },
       });
@@ -31,13 +32,11 @@ const ReviewController = {
         });
       }
 
-      const newReview = await prisma.review.create({
-        data: {
-          user_id: userId,
-          fishing_spot_id: value.fishing_spot_id,
-          rating: value.rating,
-          comment: value.comment,
-        },
+      const newReview = await reviewModel.create({
+        user_id: userId,
+        fishing_spot_id: value.fishing_spot_id,
+        rating: value.rating,
+        comment: value.comment,
       });
 
       res.status(201).json({
@@ -50,16 +49,9 @@ const ReviewController = {
     }
   },
 
-  // 🔍 Get all reviews with related user & spot
   getAll: async (req, res) => {
     try {
-      const reviews = await prisma.review.findMany({
-        include: {
-          user: { select: { username: true } },
-          fishingSpot: { select: { name: true } },
-        },
-      });
-
+      const reviews = await reviewModel.getAll();
       res.json(reviews);
     } catch (error) {
       console.error(error);
@@ -67,20 +59,14 @@ const ReviewController = {
     }
   },
 
-  // 🔍 Get all reviews by Spot ID
   getBySpotId: async (req, res) => {
     const spotId = Number(req.params.spotId);
     if (isNaN(spotId)) {
       return res.status(400).json({ error: "Invalid spot ID" });
     }
-    try {
-      const reviews = await prisma.review.findMany({
-        where: { fishing_spot_id: spotId },
-        include: {
-          user: { select: { username: true } },
-        },
-      });
 
+    try {
+      const reviews = await reviewModel.getByFishingSpotId(spotId);
       res.json(reviews);
     } catch (error) {
       console.error(error);

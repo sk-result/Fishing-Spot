@@ -23,6 +23,11 @@ const paymentModel = {
       where: { id: Number(id) },
     });
   },
+  getByTicketId: async (ticketId) => {
+    return await prismaClient.payment.findUnique({
+      where: { ticket_id: ticketId },
+    });
+  },
 };
 
 export default paymentModel;
