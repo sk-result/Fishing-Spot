@@ -30,4 +30,21 @@ const authorizeRoles = (...allowedRoles) => {
   };
 };
 
-export { authenticateToken, authorizeRoles};
+const authorizeOwnerOrAdmin = (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const paramId = parseInt(req.params.id);
+
+    if (req.user.role === "admin" || userId === paramId) {
+      return next();
+    }
+
+    return res.status(403).json({ message: "Akses ditolak" });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Server error", error: err.message });
+  }
+};
+
+export { authenticateToken, authorizeRoles, authorizeOwnerOrAdmin };
