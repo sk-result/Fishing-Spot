@@ -3,7 +3,6 @@ import validasiSchema from "../validator/validasi_user.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import prismaClient from "../database/dbConfig.js"; 
 
 dotenv.config();
 const secret = process.env.JWT_SECRET;
@@ -25,14 +24,12 @@ const UsersController = {
 
       const errors = [];
 
-      const existingUsername = await prismaClient.users.findUnique({
-        where: { username: value.username },
-      });
+      const existingUsername = await usersModel.getByUsername(value.username);
+
       if (existingUsername) errors.push("Username sudah digunakan");
 
-      const existingEmail = await prismaClient.users.findUnique({
-        where: { email: value.email },
-      });
+      const existingEmail = await usersModel.getByEmail(value.email);
+
       if (existingEmail) errors.push("Email sudah digunakan");
 
       if (errors.length > 0) {
@@ -77,9 +74,7 @@ const UsersController = {
         return res.status(400).json({ message: "Validasi gagal", errors });
       }
 
-      const user = await prismaClient.users.findUnique({
-        where: { email: value.email },
-      });
+      const user = await usersModel.getByEmail(value.email);
       if (!user) return res.status(401).json({ message: "Email salah" });
 
       const validPassword = await bcrypt.compare(value.password, user.password);
@@ -216,9 +211,7 @@ const UsersController = {
     try {
       const userId = req.user.id;
 
-      const user = await prismaClient.users.findUnique({
-        where: { id: userId },
-      });
+      const user = await usersModel.getById(userId);
 
       if (!user) {
         return res.status(404).json({ message: "User tidak ditemukan" });
