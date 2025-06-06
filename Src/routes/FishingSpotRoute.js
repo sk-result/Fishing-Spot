@@ -1,26 +1,47 @@
-import express from 'express';
-import multer from 'multer';
-import Fishing from '../controllers/FishingSpotController.js';
+import express from "express";
+import multer from "multer";
+import Fishing from "../controllers/FishingSpotController.js";
+import { authenticateToken, authorizeRoles } from "../middleware/auth.js";
 
 const router = express.Router();
 
-// Setup multer untuk upload file
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/'); // folder tempat menyimpan file, pastikan folder ini ada
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname);
-  },
+  destination: (req, file, cb) => cb(null, "uploads/"),
+  filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname),
 });
-const upload = multer({ storage: storage });
 
-// Route POST create dengan upload single file field "image"
-router.post('/create', upload.single('image'), Fishing.create);
+const upload = multer({ storage });
 
-router.get('/', Fishing.getAll);
-router.get('/show/:id', Fishing.getById);
-router.put('/update/:id', Fishing.update);
-router.delete('/delete/:id', Fishing.delete);
+// GET semua spot
+router.get("/", Fishing.getAll);
+
+// GET by ID
+router.get("/show/:id", Fishing.getById);
+
+// POST (dengan validasi + gambar) — hanya admin
+router.post(
+  "/create",
+  authenticateToken,
+  authorizeRoles("admin"),
+  upload.single("image"),
+  Fishing.create
+);
+
+// PUT update (gambar opsional) — hanya admin
+router.put(
+  "/update/:id",
+  authenticateToken,
+  authorizeRoles("admin"),
+  upload.single("image"),
+  Fishing.update
+);
+
+// DELETE — hanya admin
+router.delete(
+  "/delete/:id",
+  authenticateToken,
+  authorizeRoles("admin"),
+  Fishing.delete
+);
 
 export default router;

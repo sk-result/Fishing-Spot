@@ -5,11 +5,11 @@ const FishingController = {
   getAll: async (req, res) => {
     try {
       const fishings = await fishingModel.getAll();
-      res.json(fishings);
+      res.json({ status: "success", data: fishings });
     } catch (error) {
       res.status(500).json({
         status: "error",
-        message: "Tempat tidak ditemukan",
+        message: "Gagal mengambil data tempat pemancingan",
         error: error.message,
       });
     }
@@ -17,15 +17,24 @@ const FishingController = {
 
   getById: async (req, res) => {
     const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+      return res
+        .status(400)
+        .json({ status: "error", message: "ID tidak valid" });
+    }
+
     try {
       const fishing = await fishingModel.getById(id);
       if (!fishing)
-        return res.status(404).json({ error: "Fishing spot not found" });
-      res.json(fishing);
+        return res
+          .status(404)
+          .json({ status: "error", message: "Tempat tidak ditemukan" });
+
+      res.json({ status: "success", data: fishing });
     } catch (error) {
       res.status(500).json({
         status: "error",
-        message: "Tempat tidak ditemukan",
+        message: "Gagal mengambil tempat pemancingan",
         error: error.message,
       });
     }
@@ -40,24 +49,31 @@ const FishingController = {
 
       if (error) {
         const errors = error.details.map((detail) => detail.message);
-        return res.status(400).json({ message: "Validasi gagal", errors });
+        return res
+          .status(400)
+          .json({ status: "error", message: "Validasi gagal", errors });
       }
 
       if (!image) {
-        return res.status(400).json({ message: "Gambar harus diupload" });
+        return res
+          .status(400)
+          .json({ status: "error", message: "Gambar harus diupload" });
       }
 
-      const { name, description, price_per_hour, status } = value;
       const data = {
-        name,
-        description,
-        price_per_hour: parseFloat(price_per_hour),
+        ...value,
+        price_per_hour: parseFloat(value.price_per_hour),
         image,
-        status,
       };
 
       const newFishing = await fishingModel.create(data);
-      res.status(201).json(newFishing);
+      res
+        .status(201)
+        .json({
+          status: "success",
+          message: "Tempat berhasil dibuat",
+          data: newFishing,
+        });
     } catch (error) {
       res.status(500).json({
         status: "error",
@@ -68,23 +84,28 @@ const FishingController = {
   },
 
   update: async (req, res) => {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+      return res
+        .status(400)
+        .json({ status: "error", message: "ID tidak valid" });
+    }
+
     try {
-      const id = parseInt(req.params.id);
       const { error, value } = validasiSchema.validate(req.body, {
         abortEarly: false,
       });
 
       if (error) {
         const errors = error.details.map((detail) => detail.message);
-        return res.status(400).json({ message: "Validasi gagal", errors });
+        return res
+          .status(400)
+          .json({ status: "error", message: "Validasi gagal", errors });
       }
 
-      const { name, description, price_per_hour, status } = value;
       const data = {
-        name,
-        description,
-        price_per_hour: parseFloat(price_per_hour),
-        status,
+        ...value,
+        price_per_hour: parseFloat(value.price_per_hour),
       };
 
       if (req.file) {
@@ -92,11 +113,15 @@ const FishingController = {
       }
 
       const updatedFishing = await fishingModel.update(id, data);
-      res.json(updatedFishing);
+      res.json({
+        status: "success",
+        message: "Tempat berhasil diperbarui",
+        data: updatedFishing,
+      });
     } catch (error) {
       res.status(500).json({
         status: "error",
-        message: "Proses gagal saat merubah data tempat pemancingan",
+        message: "Gagal mengubah tempat pemancingan",
         error: error.message,
       });
     }
@@ -104,23 +129,28 @@ const FishingController = {
 
   delete: async (req, res) => {
     const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+      return res
+        .status(400)
+        .json({ status: "error", message: "ID tidak valid" });
+    }
+
     try {
       const fishing = await fishingModel.getById(id);
       if (!fishing) {
         return res
           .status(404)
-          .json({ message: "Tempat pemancingan tidak ditemukan" });
+          .json({ status: "error", message: "Tempat tidak ditemukan" });
       }
 
       await fishingModel.delete(id);
-      res.json({ message: "Tempat pemancingan berhasil dihapus" });
+      res.json({ status: "success", message: "Tempat berhasil dihapus" });
     } catch (error) {
-      res
-        .status(500)
-        .json({
-          error: "Gagal menghapus tempat pemancingan",
-          detail: error.message,
-        });
+      res.status(500).json({
+        status: "error",
+        message: "Gagal menghapus tempat pemancingan",
+        error: error.message,
+      });
     }
   },
 };

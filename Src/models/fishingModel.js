@@ -7,21 +7,17 @@ const fishingModel = {
   getAll: async () => {
     return await prismaClient.fishing.findMany();
   },
+  getById: async (id) => {
+    return await prismaClient.fishing.findUnique({ where: { id: Number(id) } });
+  },
   update: async (id, data) => {
     return await prismaClient.fishing.update({
       where: { id: Number(id) },
       data,
     });
   },
-  getById: async (id) => {
-    return await prismaClient.fishing.findUnique({
-      where: { id: Number(id) },
-    });
-  },
   delete: async (id) => {
-    return await prismaClient.fishing.delete({
-      where: { id: Number(id) },
-    });
+    return await prismaClient.fishing.delete({ where: { id: Number(id) } });
   },
 };
 
