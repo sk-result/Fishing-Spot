@@ -73,6 +73,58 @@ const ReviewController = {
       res.status(500).json({ error: "Failed to fetch reviews for this spot" });
     }
   },
+  update: async (req, res) => {
+    const reviewId = parseInt(req.params.id);
+    const { rating, comment } = req.body;
+
+    try {
+      const review = await reviewModel.getById(reviewId);
+
+      if (!review) {
+        return res.status(404).json({ message: "Review tidak ditemukan" });
+      }
+
+      if (review.user_id !== req.user.userId && req.user.role !== "admin") {
+        return res.status(403).json({ message: "Akses ditolak" });
+      }
+
+      const updated = await reviewModel.update(reviewId, { rating, comment });
+      res.json({ message: "Review diperbarui", data: updated });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  delete: async (req, res) => {
+    const reviewId = parseInt(req.params.id);
+
+    try {
+      const review = await reviewModel.getById(reviewId);
+
+      if (!review) {
+        return res.status(404).json({ message: "Review tidak ditemukan" });
+      }
+
+      if (review.user_id !== req.user.userId && req.user.role !== "admin") {
+        return res.status(403).json({ message: "Akses ditolak" });
+      }
+
+      await reviewModel.delete(reviewId);
+      res.json({ message: "Review berhasil dihapus" });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+  getByUserId: async (req, res) => {
+    const userId = parseInt(req.params.userId);
+
+    try {
+      const reviews = await reviewModel.getByUserId(userId);
+      res.json(reviews);
+    } catch (error) {
+      res.status(500).json({ error: "Gagal mengambil review user" });
+    }
+  },
 };
 
 export default ReviewController;

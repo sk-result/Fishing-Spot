@@ -16,7 +16,7 @@ app.use("/api/tickets", TicketsRoute);
 app.use("/api/usages", TicketsUsagesRoute);
 app.use("/api/users", UsersRoutes);
 app.use("/api/payment", PaymentRoute);
-app.use("/api/review", ReviewRoute);
+app.use("/api/reviews", ReviewRoute);
 
 
 app.use((err, req, res, next) => {

@@ -33,7 +33,7 @@ const validasiRegister = Joi.object({
       "string.empty": `"phone_number" tidak boleh kosong`,
       "any.required": `"phone_number" wajib diisi`,
     }),
-  role: Joi.string().valid("user", "admin").optional().messages({
+  role: Joi.string().valid("user", "admin", "super_admin").optional().messages({
     "string.base": `"role" harus berupa teks`,
     "any.only": `"role" hanya boleh bernilai user, admin, atau superadmin`,
   }),
