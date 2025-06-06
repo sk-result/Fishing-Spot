@@ -1,16 +1,15 @@
 import express from "express";
-import Tickets from "../controllers/TicketsController.js";
-import { authenticateToken, authorizeRoles } from "../middleware/auth.js";
+import TicketsController from "../controllers/TicketsController.js";
+import { authenticateToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.get("/", authenticateToken, Tickets.GetAll);
-router.get("/:id", authenticateToken, Tickets.GetById);
-router.post("/create", authenticateToken, Tickets.create);
-// router.post("/buy", authenticateToken, Tickets.BuyTickets);
-router.post("/cetak", authenticateToken, Tickets.cetakTicket);
-// router.post("/buy", authenticateToken, Tickets.BuyTickets);
-router.put("/update/:id", authenticateToken, Tickets.update);
-router.delete("/delete/:id", authenticateToken, Tickets.delete);
+router.get("/", authenticateToken, TicketsController.getAll);
+router.get("/user", authenticateToken, TicketsController.getByUserId);
+router.get("/:id", authenticateToken, TicketsController.getById);
+router.post("/", authenticateToken, TicketsController.create);
+router.put("/:id", authenticateToken, TicketsController.update);
+router.delete("/:id", authenticateToken, TicketsController.delete);
+router.post("/print", authenticateToken, TicketsController.cetakTicket);
 
 export default router;
