@@ -6,6 +6,9 @@ import dotenv from "dotenv";
 
 dotenv.config();
 const secret = process.env.JWT_SECRET;
+if (!secret) {
+  throw new Error("JWT_SECRET tidak ditemukan di .env");
+}
 
 const UsersController = {
   // ================================
@@ -15,7 +18,9 @@ const UsersController = {
   // Register User (role otomatis 'user')
   Register: async (req, res) => {
     try {
-      req.body.phone_number = req.body.phone_number.replace(/\s+/g, "");
+      if (req.body.phone_number) {
+        req.body.phone_number = req.body.phone_number.replace(/\s+/g, "");
+      }
       const { error, value } = validasiSchema.validasiRegister.validate(
         req.body,
         {
@@ -97,7 +102,7 @@ const UsersController = {
           status: "fail",
           message: "Password salah",
         });
-
+      const expiresIn = "1h"; 
       const token = jwt.sign(
         {
           username: user.username,
@@ -106,7 +111,7 @@ const UsersController = {
           role: user.role,
         },
         secret,
-        { expiresIn: "1h" }
+        { expiresIn }
       );
 
       return res.status(200).json({
@@ -118,6 +123,8 @@ const UsersController = {
           username: user.username,
           email: user.email,
           role: user.role,
+          phone_number: user.phone_number,
+          expiresIn,
         },
       });
     } catch (err) {
@@ -229,63 +236,53 @@ const UsersController = {
     }
   },
 
-  // Update user untuk superadmin yang bisa update semua
-  Update: async (req, res) => {
+  // Partial update user
+  PartialUpdate: async (req, res) => {
     try {
-      req.body.phone_number = req.body.phone_number.replace(/\s+/g, "");
       const id = parseInt(req.params.id);
-      const { error, value } = validasiSchema.validasiRegister.validate(
+
+      if (req.body.phone_number) {
+        req.body.phone_number = req.body.phone_number.replace(/\s+/g, "");
+      }
+
+      const { error, value } = validasiSchema.validasiPartialUpdate.validate(
         req.body,
-        {
-          abortEarly: false,
-        }
+        { abortEarly: false }
       );
 
       if (error) {
         const errors = error.details.map((detail) => detail.message);
-        return res.status(400).json({
-          status: "fail",
-          message: "Validasi update gagal",
-          errors,
-        });
+        return res.status(400).json({ message: "Validasi gagal", errors });
       }
 
-      const hashedPassword = await bcrypt.hash(value.password, 10);
+      const existingUser = await usersModel.getById(id);
+      if (!existingUser) {
+        return res.status(404).json({ message: "User tidak ditemukan" });
+      }
 
-      // Role bisa diupdate hanya oleh super_admin (harus dicek di middleware)
-      const updatedUser = await usersModel.update(id, {
-        username: value.username,
-        email: value.email,
-        password: hashedPassword,
-        phone_number: value.phone_number,
-        role: value.role,
-      });
+      if (value.email) {
+        const userByEmail = await usersModel.getByEmail(value.email);
+        if (userByEmail && userByEmail.id !== id) {
+          return res
+            .status(400)
+            .json({ message: "Email sudah digunakan oleh user lain" });
+        }
+      }
+      if (value.username) {
+        const userByUsername = await usersModel.getByUsername(value.username);
+        if (userByUsername && userByUsername.id !== id) {
+          return res
+            .status(400)
+            .json({ message: "Username sudah digunakan oleh user lain" });
+        }
+      }
 
-      res.status(200).json({
-        status: "success",
-        message: "User berhasil diupdate",
-        user: updatedUser,
-      });
-    } catch (err) {
-      return res.status(500).json({
-        status: "error",
-        message: "Gagal mengupdate user",
-        error: err.message,
-      });
-    }
-  },
-
-  // Partial update user
-  PartialUpdate: async (req, res) => {
-    try {
-      req.body.phone_number = req.body.phone_number.replace(/\s+/g, "");
-      const id = parseInt(req.params.id);
-      const allowedFields = ["username", "email", "password", "phone_number"];
+      const allowedFields = ["username", "email", "phone_number", "password"];
       const data = {};
 
       for (const key of allowedFields) {
-        if (req.body[key] !== undefined) {
-          data[key] = req.body[key];
+        if (value[key] !== undefined) {
+          data[key] = value[key];
         }
       }
 
@@ -294,6 +291,7 @@ const UsersController = {
       }
 
       const updatedUser = await usersModel.update(id, data);
+
       res.status(200).json({
         message: "User berhasil diupdate",
         user: {
@@ -312,7 +310,7 @@ const UsersController = {
     }
   },
 
-  // Delete user (owner atau admin)
+  // Delete user (user atau admin)
   Delete: async (req, res) => {
     const id = parseInt(req.params.id);
     try {
@@ -333,11 +331,11 @@ const UsersController = {
   //  ADMIN ONLY ENDPOINTS
   // ===========================
 
-  // Get all admins (admin only)
+  // ambil semua user dengan role super_admin
   GetAllAdmin: async (req, res) => {
     try {
       const users = await usersModel.getAll({
-        where: { role: "super_admin" }, // pastikan ambil yang role admin saja
+        where: { role: "super_admin" }, // pastikan ambil yang role super_admin saja
       });
       res.status(200).json({
         status: "success",
@@ -352,10 +350,13 @@ const UsersController = {
     }
   },
 
-  // Admin buat user baru (boleh set role bebas)
+  // super_admin buat user baru (boleh set role bebas)
   AdminCreateUser: async (req, res) => {
     try {
-      req.body.phone_number = req.body.phone_number.replace(/\s+/g, "");
+      if (req.body.phone_number) {
+        req.body.phone_number = req.body.phone_number.replace(/\s+/g, "");
+      }
+
       const { error, value } = validasiSchema.validasiRegister.validate(
         req.body,
         {
@@ -368,7 +369,7 @@ const UsersController = {
         return res.status(400).json({ message: "Validasi gagal", errors });
       }
 
-      // Role yang diperbolehkan oleh admin
+      // Role yang diperbolehkan oleh super_admin
       const allowedRoles = ["user", "admin"];
       const role =
         value.role && allowedRoles.includes(value.role) ? value.role : "user";
@@ -406,6 +407,70 @@ const UsersController = {
     } catch (err) {
       return res.status(500).json({
         message: "Terjadi kesalahan server",
+        error: err.message,
+      });
+    }
+  },
+  // Update user untuk superadmin yang bisa update semua
+  Update: async (req, res) => {
+    try {
+      if (req.body.phone_number) {
+        req.body.phone_number = req.body.phone_number.replace(/\s+/g, "");
+      }
+
+      const id = parseInt(req.params.id);
+      const { error, value } = validasiSchema.validasiRegister.validate(
+        req.body,
+        {
+          abortEarly: false,
+        }
+      );
+
+      if (error) {
+        const errors = error.details.map((detail) => detail.message);
+        return res.status(400).json({
+          status: "fail",
+          message: "Validasi update gagal",
+          errors,
+        });
+      }
+      if (value.email) {
+        const userByEmail = await usersModel.getByEmail(value.email);
+        if (userByEmail && userByEmail.id !== id) {
+          return res
+            .status(400)
+            .json({ message: "Email sudah digunakan oleh user lain" });
+        }
+      }
+      if (value.username) {
+        const userByUsername = await usersModel.getByUsername(value.username);
+        if (userByUsername && userByUsername.id !== id) {
+          return res
+            .status(400)
+            .json({ message: "Username sudah digunakan oleh user lain" });
+        }
+      }
+
+      const hashedPassword = await bcrypt.hash(value.password, 10);
+
+      // Role bisa diupdate hanya oleh super_admin (harus dicek di middleware)
+      const updatedUser = await usersModel.update(id, {
+        username: value.username,
+        email: value.email,
+        password: hashedPassword,
+        phone_number: value.phone_number,
+        role: value.role,
+      });
+
+      res.status(200).json({
+        status: "success",
+        message: "User berhasil diupdate",
+        user: updatedUser,
+      });
+    } catch (err) {
+      return res.status(500).json({
+        status: "error",
+        message: "Gagal mengupdate user",
         error: err.message,
       });
     }

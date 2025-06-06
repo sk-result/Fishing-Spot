@@ -28,7 +28,7 @@
           "email": {
             "type": "string",
             "format": "email",
-            "example": "john@example.com"
+            "example": "johndoe@example.com"
           },
           "password": { "type": "string", "example": "password123" },
           "phone_number": { "type": "string", "example": "08123456789" }
@@ -41,7 +41,7 @@
           "email": {
             "type": "string",
             "format": "email",
-            "example": "john@example.com"
+            "example": "johndoe@example.com"
           },
           "password": { "type": "string", "example": "password123" }
         }
