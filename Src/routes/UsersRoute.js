@@ -16,27 +16,27 @@ router.post("/logout", Users.Logout);
 router.get("/me", authenticateToken, Users.Profile);
 
 // List user umum
-router.get("/profilUserAll", Users.GetAllUser); // public w/ pagination
+router.get("/profilUserAll", authenticateToken, Users.GetAllUser); // public w/ pagination
+router.get("/profilUserById/:id", authenticateToken, Users.GetById);
 
 // List admin-only
 router.get(
-  "/profilAdminAll",
+  "/admin",
   authenticateToken,
-  authorizeRoles("admin"),
+  authorizeRoles("super_admin"),
   Users.GetAllAdmin
 );
 
 // Admin only create user dengan role dan update user dengan role
 router.post(
-  "/admin/create-user",
+  "/admin",
   authenticateToken,
-  authorizeRoles("admin"),
+  authorizeRoles("super_admin"),
   Users.AdminCreateUser
 );
-router.put("/:id", authenticateToken, authorizeRoles("admin"), Users.Update);
+router.put("/admin/:id", authenticateToken, authorizeRoles("super_admin"), Users.Update);
 
 // Akses user by ID (admin atau owner)
-router.get("/:id", authenticateToken, authorizeOwnerOrAdmin, Users.GetById);
 router.patch(
   "/:id",
   authenticateToken,

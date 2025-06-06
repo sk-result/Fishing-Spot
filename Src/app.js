@@ -6,10 +6,22 @@ import TicketsRoute from "./routes/TicketsRoute.js";
 import PaymentRoute from "./routes/PaymentRoute.js";
 import ReviewRoute from "./routes/ReviewRoute.js";
 
+import swaggerUi from "swagger-ui-express";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const swaggerDocument = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "../swagger.json"), "utf8")
+);
+
+
 const app = express();
 
 app.use(express.json());
-
 
 app.use("/api/fishing", fishingRoutes);
 app.use("/api/tickets", TicketsRoute);
@@ -18,6 +30,8 @@ app.use("/api/users", UsersRoutes);
 app.use("/api/payment", PaymentRoute);
 app.use("/api/reviews", ReviewRoute);
 
+// Serve Swagger UI di route /api-docs
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use((err, req, res, next) => {
   console.error(err);

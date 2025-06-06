@@ -20,22 +20,39 @@ const authenticateToken = (req, res, next) => {
 // Middleware untuk otorisasi berdasarkan role
 const authorizeRoles = (...allowedRoles) => {
   return (req, res, next) => {
-    // console.log(req.users.role)
-    if (!req.user || !allowedRoles.includes(req.user.role)) {
+    if (!req.user) {
+      return res
+        .status(403)
+        .json({ message: "Akses ditolak: user tidak ditemukan" });
+    }
+
+    // Jika super_admin, langsung akses
+    if (req.user.role === "super_admin") {
+      return next();
+    }
+
+    // Selain super_admin, cek role seperti biasa
+    if (!allowedRoles.includes(req.user.role)) {
       return res
         .status(403)
         .json({ message: "Akses ditolak: role tidak diizinkan" });
     }
+
     next();
   };
 };
 
+// Middleware untuk authorize owner atau admin (tambahkan super_admin bisa akses)
 const authorizeOwnerOrAdmin = (req, res, next) => {
   try {
     const userId = req.user.id;
     const paramId = parseInt(req.params.id);
 
-    if (req.user.role === "admin" || userId === paramId) {
+    if (
+      req.user.role === "super_admin" || // super_admin bisa akses semua
+      req.user.role === "admin" ||
+      userId === paramId
+    ) {
       return next();
     }
 

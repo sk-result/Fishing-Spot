@@ -15,6 +15,7 @@ const UsersController = {
   // Register User (role otomatis 'user')
   Register: async (req, res) => {
     try {
+      req.body.phone_number = req.body.phone_number.replace(/\s+/g, "");
       const { error, value } = validasiSchema.validasiRegister.validate(
         req.body,
         {
@@ -27,7 +28,6 @@ const UsersController = {
         return res.status(400).json({ message: "Validasi gagal", errors });
       }
 
-      // Role otomatis user, ignore jika client kirim role
       const role = "user";
 
       const errors = [];
@@ -200,9 +200,39 @@ const UsersController = {
     }
   },
 
-  // Update user (hanya owner atau admin)
+  // Get user by ID
+  GetById: async (req, res) => {
+    const id = parseInt(req.params.id);
+    try {
+      const user = await usersModel.getById(id);
+      if (!user) {
+        return res.status(404).json({
+          status: "fail",
+          message: "User tidak ditemukan",
+        });
+      }
+
+      res.status(200).json({
+        status: "success",
+        user: {
+          id: user.id,
+          username: user.username,
+          phone_number: user.phone_number,
+        },
+      });
+    } catch (err) {
+      return res.status(500).json({
+        status: "error",
+        message: "Terjadi kesalahan pada server",
+        error: err.message,
+      });
+    }
+  },
+
+  // Update user untuk superadmin yang bisa update semua
   Update: async (req, res) => {
     try {
+      req.body.phone_number = req.body.phone_number.replace(/\s+/g, "");
       const id = parseInt(req.params.id);
       const { error, value } = validasiSchema.validasiRegister.validate(
         req.body,
@@ -222,7 +252,7 @@ const UsersController = {
 
       const hashedPassword = await bcrypt.hash(value.password, 10);
 
-      // Role bisa diupdate hanya oleh admin (harus dicek di middleware)
+      // Role bisa diupdate hanya oleh super_admin (harus dicek di middleware)
       const updatedUser = await usersModel.update(id, {
         username: value.username,
         email: value.email,
@@ -245,9 +275,10 @@ const UsersController = {
     }
   },
 
-  // Partial update user (hanya owner atau admin)
+  // Partial update user
   PartialUpdate: async (req, res) => {
     try {
+      req.body.phone_number = req.body.phone_number.replace(/\s+/g, "");
       const id = parseInt(req.params.id);
       const allowedFields = ["username", "email", "password", "phone_number"];
       const data = {};
@@ -265,40 +296,17 @@ const UsersController = {
       const updatedUser = await usersModel.update(id, data);
       res.status(200).json({
         message: "User berhasil diupdate",
-        user: updatedUser,
+        user: {
+          id: updatedUser.id,
+          username: updatedUser.username,
+          email: updatedUser.email,
+          phone_number: updatedUser.phone_number,
+          role: updatedUser.role,
+        },
       });
     } catch (err) {
       res.status(500).json({
         message: "Gagal mengupdate user",
-        error: err.message,
-      });
-    }
-  },
-
-  // Get user by ID (owner atau admin)
-  GetById: async (req, res) => {
-    const id = parseInt(req.params.id);
-    try {
-      const user = await usersModel.getById(id);
-      if (!user) {
-        return res.status(404).json({
-          status: "fail",
-          message: "User tidak ditemukan",
-        });
-      }
-
-      res.status(200).json({
-        status: "success",
-        user: {
-          id: user.id,
-          username: user.username,
-          email: user.email,
-        },
-      });
-    } catch (err) {
-      return res.status(500).json({
-        status: "error",
-        message: "Terjadi kesalahan pada server",
         error: err.message,
       });
     }
@@ -329,7 +337,7 @@ const UsersController = {
   GetAllAdmin: async (req, res) => {
     try {
       const users = await usersModel.getAll({
-        where: { role: "admin" }, // pastikan ambil yang role admin saja
+        where: { role: "super_admin" }, // pastikan ambil yang role admin saja
       });
       res.status(200).json({
         status: "success",
@@ -347,6 +355,7 @@ const UsersController = {
   // Admin buat user baru (boleh set role bebas)
   AdminCreateUser: async (req, res) => {
     try {
+      req.body.phone_number = req.body.phone_number.replace(/\s+/g, "");
       const { error, value } = validasiSchema.validasiRegister.validate(
         req.body,
         {
