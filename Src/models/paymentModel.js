@@ -5,17 +5,21 @@ const paymentModel = {
     return await prismaClient.payment.create({ data });
   },
   getAll: async () => {
-    return await prismaClient.payment.findMany();
-  },
-  update: async (id, data) => {
-    return await prismaClient.payment.update({
-      where: { id: Number(id) },
-      data,
+    return await prismaClient.payment.findMany({
+      include: {
+        ticket: true, // kalau kamu mau join tiket, bisa sesuaikan
+      },
+      orderBy: {
+        created_at: "desc",
+      },
     });
   },
   getById: async (id) => {
     return await prismaClient.payment.findUnique({
       where: { id: Number(id) },
+      include: {
+        ticket: true,
+      },
     });
   },
   delete: async (id) => {

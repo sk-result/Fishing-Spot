@@ -1,5 +1,5 @@
 import usagesModel from "../models/ticketUsagesModel.js";
-import ticketsModel from "../models/ticketsModel.js"; // import model tiket
+import ticketsModel from "../models/ticketsModel.js";
 import { TicketUsageSchema } from "../validator/validasi_usage.js";
 
 const ticketUsageController = {
@@ -63,6 +63,63 @@ const ticketUsageController = {
         message: "Gagal menggunakan tiket",
         error: error.message,
       });
+    }
+  },
+
+  getAll: async (req, res) => {
+    try {
+      const usages = await usagesModel.getAll();
+      res.status(200).json({ usages });
+    } catch (error) {
+      res
+        .status(500)
+        .json({
+          message: "Gagal mengambil data penggunaan tiket",
+          error: error.message,
+        });
+    }
+  },
+
+  getById: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const usage = await usagesModel.getById(id);
+      if (!usage) {
+        return res
+          .status(404)
+          .json({ message: "Data penggunaan tiket tidak ditemukan" });
+      }
+      res.status(200).json({ usage });
+    } catch (error) {
+      res
+        .status(500)
+        .json({
+          message: "Gagal mengambil data penggunaan tiket",
+          error: error.message,
+        });
+    }
+  },
+
+  delete: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const usage = await usagesModel.getById(id);
+      if (!usage) {
+        return res
+          .status(404)
+          .json({ message: "Data penggunaan tiket tidak ditemukan" });
+      }
+      await usagesModel.delete(id);
+      res
+        .status(200)
+        .json({ message: "Data penggunaan tiket berhasil dihapus" });
+    } catch (error) {
+      res
+        .status(500)
+        .json({
+          message: "Gagal menghapus data penggunaan tiket",
+          error: error.message,
+        });
     }
   },
 };
