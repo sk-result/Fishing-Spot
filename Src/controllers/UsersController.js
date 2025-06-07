@@ -335,7 +335,14 @@ const UsersController = {
   GetAllAdmin: async (req, res) => {
     try {
       const users = await usersModel.getAll({
-        where: { role: "super_admin" }, // ambil hanya super_admin
+        select: {
+          id: true,
+          username: true,
+          email: true,
+          phone_number: true,
+          createdAt: true,
+          updatedAt: true,
+        },
       });
 
       return res.status(200).json({
@@ -343,7 +350,7 @@ const UsersController = {
         users,
       });
     } catch (error) {
-      console.error(error); 
+      console.error(error);
 
       return res.status(500).json({
         status: "error",
