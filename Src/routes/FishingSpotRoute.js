@@ -16,11 +16,11 @@ const upload = multer({ storage });
 router.get("/", Fishing.getAll);
 
 // GET by ID
-router.get("/show/:id", Fishing.getById);
+router.get("/:id", Fishing.getById);
 
 // POST (dengan validasi + gambar) — hanya admin
 router.post(
-  "/create",
+  "/",
   authenticateToken,
   authorizeRoles("admin"),
   upload.single("image"),
@@ -29,7 +29,7 @@ router.post(
 
 // PUT update (gambar opsional) — hanya admin
 router.put(
-  "/update/:id",
+  "/:id",
   authenticateToken,
   authorizeRoles("admin"),
   upload.single("image"),
@@ -38,7 +38,7 @@ router.put(
 
 // DELETE — hanya admin
 router.delete(
-  "/delete/:id",
+  "/:id",
   authenticateToken,
   authorizeRoles("admin"),
   Fishing.delete

@@ -102,7 +102,7 @@ const UsersController = {
           status: "fail",
           message: "Password salah",
         });
-      const expiresIn = "1h";
+      const expiresIn = "5h";
       const token = jwt.sign(
         {
           username: user.username,
