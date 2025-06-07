@@ -151,7 +151,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "id": { "type": "string", "description": "ID user" },
+                    "id": { "type": "integer", "description": "ID user" },
                     "username": { "type": "string" },
                     "email": { "type": "string", "format": "email" },
                     "role": { "type": "string" },
@@ -159,7 +159,7 @@
                   }
                 },
                 "example": {
-                  "id": "123abc",
+                  "id": 1,
                   "username": "johndoe",
                   "email": "johndoe@example.com",
                   "role": "user",
@@ -228,7 +228,7 @@
         }
       }
     },
-    "/users/login": {
+    "/login": {
       "post": {
         "summary": "Login User",
         "tags": ["Auth"],

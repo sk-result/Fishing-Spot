@@ -102,7 +102,7 @@ const UsersController = {
           status: "fail",
           message: "Password salah",
         });
-      const expiresIn = "1h"; 
+      const expiresIn = "1h";
       const token = jwt.sign(
         {
           username: user.username,
@@ -335,13 +335,16 @@ const UsersController = {
   GetAllAdmin: async (req, res) => {
     try {
       const users = await usersModel.getAll({
-        where: { role: "super_admin" }, // pastikan ambil yang role super_admin saja
+        where: { role: "super_admin" }, // ambil hanya super_admin
       });
-      res.status(200).json({
+
+      return res.status(200).json({
         status: "success",
         users,
       });
     } catch (error) {
+      console.error(error); 
+
       return res.status(500).json({
         status: "error",
         message: "Gagal mengambil data admin",
