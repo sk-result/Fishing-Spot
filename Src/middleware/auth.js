@@ -8,6 +8,10 @@ const authenticateToken = (req, res, next) => {
     return res.status(401).json({ message: "Format token tidak valid" });
   }
 
+  if (err.name === "TokenExpiredError") {
+    return res.status(401).json({ message: "Token telah kedaluwarsa" });
+  }
+
   const token = authHeader.split(" ")[1];
 
   try {
