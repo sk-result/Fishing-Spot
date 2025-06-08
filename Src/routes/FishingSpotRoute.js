@@ -22,7 +22,7 @@ router.get("/:id", Fishing.getById);
 router.post(
   "/",
   authenticateToken,
-  authorizeRoles("admin"),
+  authorizeRoles("admin", "super_admin"),
   upload.single("image"),
   Fishing.create
 );
@@ -31,7 +31,7 @@ router.post(
 router.put(
   "/:id",
   authenticateToken,
-  authorizeRoles("admin"),
+  authorizeRoles("admin", "super_admin"),
   upload.single("image"),
   Fishing.update
 );
@@ -40,7 +40,7 @@ router.put(
 router.delete(
   "/:id",
   authenticateToken,
-  authorizeRoles("admin"),
+  authorizeRoles("admin", "super_admin"),
   Fishing.delete
 );
 

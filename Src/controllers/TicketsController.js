@@ -2,17 +2,29 @@
 import ticketsModel from "../models/ticketsModel.js";
 import validasiSchema from "../validator/validasi_tickets.js";
 
+const formatSuccess = (message, data) => ({
+  status: "success",
+  message,
+  data,
+});
+
+const formatError = (message, error = null, errors = null) => ({
+  status: "error",
+  message,
+  data: null,
+  ...(error && { error }),
+  ...(errors && { errors }),
+});
+
 const TicketsController = {
   getAll: async (req, res) => {
     try {
       const tickets = await ticketsModel.getAll();
-      res.json({ status: "success", data: tickets });
+      res.json(formatSuccess("Berhasil mengambil semua tiket", tickets));
     } catch (error) {
-      res.status(500).json({
-        status: "error",
-        message: "Gagal mengambil data tiket",
-        error: error.message,
-      });
+      res
+        .status(500)
+        .json(formatError("Gagal mengambil data tiket", error.message));
     }
   },
 
@@ -20,43 +32,31 @@ const TicketsController = {
     try {
       const id = parseInt(req.params.id);
       if (isNaN(id))
-        return res
-          .status(400)
-          .json({ status: "error", message: "ID tiket tidak valid" });
+        return res.status(400).json(formatError("ID tiket tidak valid"));
 
       const ticket = await ticketsModel.getById(id);
-      if (!ticket) {
-        return res
-          .status(404)
-          .json({ status: "error", message: "Tiket tidak ditemukan" });
-      }
+      if (!ticket)
+        return res.status(404).json(formatError("Tiket tidak ditemukan"));
 
-      res.status(200).json({ status: "success", data: ticket });
+      res.status(200).json(formatSuccess("Tiket ditemukan", ticket));
     } catch (error) {
-      res.status(500).json({
-        status: "error",
-        message: "Gagal mengambil tiket",
-        error: error.message,
-      });
+      res.status(500).json(formatError("Gagal mengambil tiket", error.message));
     }
   },
 
   getByUserId: async (req, res) => {
     try {
       const userId = req.user?.id;
-      if (!userId) {
-        return res
-          .status(401)
-          .json({ status: "error", message: "Unauthorized" });
-      }
+      if (!userId) return res.status(401).json(formatError("Unauthorized"));
+
       const tickets = await ticketsModel.getByUserId(userId);
-      res.status(200).json({ status: "success", data: tickets });
+      res
+        .status(200)
+        .json(formatSuccess("Berhasil mengambil tiket pengguna", tickets));
     } catch (error) {
-      res.status(500).json({
-        status: "error",
-        message: "Gagal mengambil tiket user",
-        error: error.message,
-      });
+      res
+        .status(500)
+        .json(formatError("Gagal mengambil tiket user", error.message));
     }
   },
 
@@ -69,38 +69,34 @@ const TicketsController = {
         const errors = error.details.map((detail) => detail.message);
         return res
           .status(400)
-          .json({ status: "error", message: "Validasi gagal", errors });
+          .json(formatError("Validasi gagal", null, errors));
       }
 
       const userId = req.user?.id;
       const username = req.user?.username;
-      if (!userId) {
+      if (!userId)
         return res
           .status(401)
-          .json({
-            status: "error",
-            message: "Unauthorized, token tidak valid",
-          });
-      }
+          .json(formatError("Unauthorized, token tidak valid"));
 
       const fishingSpot = await ticketsModel.getFishingSpotById(
         value.fishing_spot_id
       );
-      if (!fishingSpot) {
+      if (!fishingSpot)
         return res
           .status(404)
-          .json({ status: "error", message: "Spot memancing tidak ditemukan" });
-      }
+          .json(formatError("Spot memancing tidak ditemukan"));
 
-      const pricePerHour = Number(fishingSpot.price_per_hour);
-      const duration = value.duration_minutes || 60;
-      const totalPrice = (pricePerHour * duration) / 60;
-
-      const ticket_code = `T-${Date.now().toString().slice(-4)}${Math.floor(
-        Math.random() * 100
-      )}`;
+      const ticket_code = `T-${Math.random()
+        .toString(36)
+        .substring(2, 8)
+        .toUpperCase()}`;
       const valid_date = new Date();
       valid_date.setDate(valid_date.getDate() + 3);
+
+      const pricePerHour = Number(fishingSpot.price_per_hour);
+      const duration = value.duration_minutes;
+      const totalPrice = (pricePerHour * duration) / 60;
 
       const data = {
         ticket_code,
@@ -111,28 +107,25 @@ const TicketsController = {
         duration_minutes: duration,
         user_id: userId,
         created_at: new Date(),
+        updated_at: new Date(),
       };
 
       const newTicket = await ticketsModel.create(data);
-
-      res.status(201).json({
-        status: "success",
-        message: "Tiket berhasil dibuat",
-        data: {
+      res.status(201).json(
+        formatSuccess("Tiket berhasil dibuat", {
+          id: newTicket.id,
           code: newTicket.ticket_code,
           name: username,
+          spot: fishingSpot.name,
           payment_expired: newTicket.valid_date,
-          status: newTicket.status,
+          status_ticket: newTicket.status,
           status_pembayaran: newTicket.status_pembayaran,
+          duration_minutes: duration,
           amount: totalPrice,
-        },
-      });
+        })
+      );
     } catch (error) {
-      res.status(500).json({
-        status: "error",
-        message: "Gagal membuat tiket",
-        error: error.message,
-      });
+      res.status(500).json(formatError("Gagal membuat tiket", error.message));
     }
   },
 
@@ -140,9 +133,7 @@ const TicketsController = {
     try {
       const id = parseInt(req.params.id);
       if (isNaN(id))
-        return res
-          .status(400)
-          .json({ status: "error", message: "ID tiket tidak valid" });
+        return res.status(400).json(formatError("ID tiket tidak valid"));
 
       const { error, value } = validasiSchema.validate(req.body, {
         abortEarly: false,
@@ -151,38 +142,31 @@ const TicketsController = {
         const errors = error.details.map((detail) => detail.message);
         return res
           .status(400)
-          .json({ status: "error", message: "Validasi gagal", errors });
+          .json(formatError("Validasi gagal", null, errors));
       }
 
       const fishingSpot = await ticketsModel.getFishingSpotById(
         value.fishing_spot_id
       );
-      if (!fishingSpot) {
+      if (!fishingSpot)
         return res
           .status(404)
-          .json({ status: "error", message: "Spot memancing tidak ditemukan" });
-      }
+          .json(formatError("Spot memancing tidak ditemukan"));
 
       const data = {
         fishing_spot_id: value.fishing_spot_id,
-        duration_minutes: value.duration_minutes || 60,
-        // Jangan ubah status dan created_at otomatis saat update
+        duration_minutes: value.duration_minutes,
         updated_at: new Date(),
       };
 
       const updatedTicket = await ticketsModel.update(id, data);
-
-      res.status(200).json({
-        status: "success",
-        message: "Tiket berhasil diperbarui",
-        data: updatedTicket,
-      });
+      res
+        .status(200)
+        .json(formatSuccess("Tiket berhasil diperbarui", updatedTicket));
     } catch (error) {
-      res.status(500).json({
-        status: "error",
-        message: "Gagal memperbarui tiket",
-        error: error.message,
-      });
+      res
+        .status(500)
+        .json(formatError("Gagal memperbarui tiket", error.message));
     }
   },
 
@@ -190,27 +174,16 @@ const TicketsController = {
     try {
       const id = parseInt(req.params.id);
       if (isNaN(id))
-        return res
-          .status(400)
-          .json({ status: "error", message: "ID tiket tidak valid" });
+        return res.status(400).json(formatError("ID tiket tidak valid"));
 
       const existing = await ticketsModel.getById(id);
-      if (!existing) {
-        return res
-          .status(404)
-          .json({ status: "error", message: "Tiket tidak ditemukan." });
-      }
+      if (!existing)
+        return res.status(404).json(formatError("Tiket tidak ditemukan"));
 
       await ticketsModel.delete(id);
-      res
-        .status(200)
-        .json({ status: "success", message: "Tiket telah dihapus" });
+      res.status(200).json(formatSuccess("Tiket telah dihapus", null));
     } catch (error) {
-      res.status(500).json({
-        status: "error",
-        message: "Gagal menghapus tiket.",
-        error: error.message,
-      });
+      res.status(500).json(formatError("Gagal menghapus tiket", error.message));
     }
   },
 
@@ -220,59 +193,40 @@ const TicketsController = {
       const userId = req.user?.id;
       const username = req.user?.username;
 
-      if (!userId) {
+      if (!userId)
         return res
           .status(401)
-          .json({
-            status: "error",
-            message: "Unauthorized, token tidak valid",
-          });
-      }
-
-      if (!ticket_code) {
-        return res
-          .status(400)
-          .json({ status: "error", message: "Kode tiket wajib diisi" });
-      }
+          .json(formatError("Unauthorized, token tidak valid"));
+      if (!ticket_code || typeof ticket_code !== "string")
+        return res.status(400).json(formatError("Kode tiket tidak valid"));
 
       const result = await ticketsModel.cetakTicketByCode(ticket_code, userId);
 
-      if (!result) {
+      if (!result)
         return res
           .status(404)
-          .json({
-            status: "error",
-            message: "Tiket tidak ditemukan atau bukan milik Anda",
-          });
-      }
-
-      if (result === "unpaid") {
+          .json(formatError("Tiket tidak ditemukan atau bukan milik Anda"));
+      if (result === "unpaid")
         return res
           .status(403)
-          .json({
-            status: "error",
-            message: "Tiket belum dibayar, tidak bisa dicetak",
-          });
-      }
+          .json(formatError("Tiket belum dibayar, tidak bisa dicetak"));
 
-      res.status(200).json({
-        status: "success",
-        message: "Tiket berhasil dicetak",
-        data: {
+      res.status(200).json(
+        formatSuccess("Tiket berhasil dicetak", {
           code: result.ticket_code,
           name: username,
           valid_until: result.valid_date,
           status: result.status,
           duration: result.duration_minutes,
           spot: result.fishing_spot?.name,
-        },
-      });
+        })
+      );
     } catch (error) {
-      res.status(500).json({
-        status: "error",
-        message: "Terjadi kesalahan saat mencetak tiket",
-        error: error.message,
-      });
+      res
+        .status(500)
+        .json(
+          formatError("Terjadi kesalahan saat mencetak tiket", error.message)
+        );
     }
   },
 };

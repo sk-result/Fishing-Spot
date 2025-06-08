@@ -32,6 +32,7 @@ const paymentModel = {
       where: { ticket_id: ticketId },
     });
   },
+ 
 };
 
 export default paymentModel;

@@ -10,19 +10,19 @@ router.post("/pembayaran", authenticateToken, Payment.PaymentTicket);
 router.get(
   "/",
   authenticateToken,
-  authorizeRoles("admin"),
+  authorizeRoles("admin", "super_admin"),
   Payment.getAllPayments
 );
 router.get(
   "/:id",
   authenticateToken,
-  authorizeRoles("admin"),
+  authorizeRoles("admin", "super_admin"),
   Payment.getPaymentById
 );
 router.delete(
   "/:id",
   authenticateToken,
-  authorizeRoles("admin"),
+  authorizeRoles("admin", "super_admin"),
   Payment.deletePayment
 );
 

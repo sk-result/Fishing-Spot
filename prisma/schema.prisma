@@ -72,7 +72,7 @@ model tickets {
   id                Int           @id @default(autoincrement())
   user_id           Int
   user              Users         @relation(fields: [user_id], references: [id])
-  ticket_code       String        @db.VarChar(10)
+  ticket_code       String        @unique @db.VarChar(10)
   fishing_spot_id   Int
   fishing_spot      Fishing       @relation(fields: [fishing_spot_id], references: [id])
   valid_date        DateTime
@@ -80,8 +80,9 @@ model tickets {
   status_pembayaran StatusPayment @default(unpaid)
   duration_minutes  Int
   created_at        DateTime      @default(now())
+  updated_at        DateTime      @updatedAt
   TicketUsage       TicketUsage[]
-  Payment           Payment[]
+  Payment           Payment? // one to one
 
   @@map("tickets")
 }

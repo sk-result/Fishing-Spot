@@ -51,7 +51,6 @@ const FishingController = {
 
   create: async (req, res) => {
     try {
-      const image = req.file ? req.file.filename : null;
       const { error, value } = validasiSchema.validate(req.body, {
         abortEarly: false,
       });
@@ -63,17 +62,13 @@ const FishingController = {
           .json({ status: "error", message: "Validasi gagal", errors });
       }
 
-      if (!image || !req.file.mimetype.startsWith("image/")) {
+      if (!req.file || !req.file.mimetype.startsWith("image/")) {
         return res
           .status(400)
           .json({ status: "error", message: "File harus berupa gambar" });
       }
 
-      if (!image) {
-        return res
-          .status(400)
-          .json({ status: "error", message: "Gambar harus diupload" });
-      }
+      const image = req.file.filename;
 
       const data = {
         ...value,
@@ -121,11 +116,12 @@ const FishingController = {
         price_per_hour: parseFloat(value.price_per_hour),
       };
 
-      if (req.file && !req.file.mimetype.startsWith("image/")) {
-        return res.status(400).json({ message: "File harus berupa gambar" });
-      }
-
       if (req.file) {
+        if (!req.file.mimetype.startsWith("image/")) {
+          return res
+            .status(400)
+            .json({ status: "error", message: "File harus berupa gambar" });
+        }
         data.image = req.file.filename;
       }
 
@@ -170,7 +166,6 @@ const FishingController = {
 
       await fishingModel.delete(id);
 
-      res.status(204).send(); // atau jika tetap ingin pesan:
       res.json({ status: "success", message: "Tempat berhasil dihapus" });
     } catch (error) {
       res.status(500).json({
