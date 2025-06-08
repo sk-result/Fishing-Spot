@@ -73,6 +73,16 @@ const ticketsModel = {
       where: { ticket_code: code },
     });
   },
+  
+  updateStatus: async (id, status) => {
+    return await prismaClient.tickets.update({
+      where: { id },
+      data: {
+        status,
+        updated_at: new Date(),
+      },
+    });
+  },
 };
 
 export default ticketsModel;
