@@ -1,12 +1,22 @@
 import express from "express";
 import TicketsController from "../controllers/TicketsController.js";
-import { authenticateToken } from "../middleware/auth.js";
+import { authenticateToken, authorizeRoles } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.get("/", authenticateToken, TicketsController.getAll);
-router.get("/user", authenticateToken, TicketsController.getByUserId);
-router.get("/:id", authenticateToken, TicketsController.getById);
+router.get(
+  "/",
+  authenticateToken,
+  authorizeRoles("admin", "super_admin"),
+  TicketsController.getAll
+);
+router.get("/me", authenticateToken, TicketsController.getMyTickets);
+router.get(
+  "/:id",
+  authenticateToken,
+  authorizeRoles("admin", "super_admin"),
+  TicketsController.getById
+);
 router.post("/", authenticateToken, TicketsController.create);
 router.put("/:id", authenticateToken, TicketsController.update);
 router.delete("/:id", authenticateToken, TicketsController.delete);

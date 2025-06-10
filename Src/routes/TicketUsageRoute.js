@@ -11,19 +11,19 @@ router.post("/", authenticateToken, TicketUsageController.useTicket);
 router.get(
   "/",
   authenticateToken,
-  authorizeRoles("admin"),
+  authorizeRoles("admin", "super_admin"),
   TicketUsageController.getAll
 );
 router.get(
   "/:id",
   authenticateToken,
-  authorizeRoles("admin"),
+  authorizeRoles("admin", "super_admin"),
   TicketUsageController.getById
 );
 router.delete(
   "/:id",
   authenticateToken,
-  authorizeRoles("admin"),
+  authorizeRoles("admin", "super_admin"),
   TicketUsageController.delete
 );
 

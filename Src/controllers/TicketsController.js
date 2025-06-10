@@ -20,7 +20,16 @@ const TicketsController = {
   getAll: async (req, res) => {
     try {
       const tickets = await ticketsModel.getAll();
-      res.json(formatSuccess("Berhasil mengambil semua tiket", tickets));
+
+      if (!tickets || tickets.length === 0) {
+        return res
+          .status(200)
+          .json(formatSuccess("Tidak ada tiket tersedia", []));
+      }
+
+      res
+        .status(200)
+        .json(formatSuccess("Berhasil mengambil semua tiket", tickets));
     } catch (error) {
       res
         .status(500)
@@ -30,13 +39,15 @@ const TicketsController = {
 
   getById: async (req, res) => {
     try {
-      const id = parseInt(req.params.id);
-      if (isNaN(id))
+      const id = Number(req.params.id);
+      if (isNaN(id)) {
         return res.status(400).json(formatError("ID tiket tidak valid"));
+      }
 
       const ticket = await ticketsModel.getById(id);
-      if (!ticket)
+      if (!ticket) {
         return res.status(404).json(formatError("Tiket tidak ditemukan"));
+      }
 
       res.status(200).json(formatSuccess("Tiket ditemukan", ticket));
     } catch (error) {
@@ -44,10 +55,12 @@ const TicketsController = {
     }
   },
 
-  getByUserId: async (req, res) => {
+  getMyTickets: async (req, res) => {
     try {
       const userId = req.user?.id;
-      if (!userId) return res.status(401).json(formatError("Unauthorized"));
+      if (!userId) {
+        return res.status(401).json(formatError("Unauthorized"));
+      }
 
       const tickets = await ticketsModel.getByUserId(userId);
       res
@@ -131,7 +144,7 @@ const TicketsController = {
 
   update: async (req, res) => {
     try {
-      const id = parseInt(req.params.id);
+      const id = Number(req.params.id);
       if (isNaN(id))
         return res.status(400).json(formatError("ID tiket tidak valid"));
 
@@ -172,7 +185,7 @@ const TicketsController = {
 
   delete: async (req, res) => {
     try {
-      const id = parseInt(req.params.id);
+      const id = Number(req.params.id);
       if (isNaN(id))
         return res.status(400).json(formatError("ID tiket tidak valid"));
 
