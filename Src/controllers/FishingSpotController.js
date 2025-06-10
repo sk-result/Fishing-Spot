@@ -1,180 +1,180 @@
-import fishingModel from "../models/fishingModel.js";
-import validasiSchema from "../validator/validasi_fishing_spot.js";
+// import fishingModel from "../models/fishingModel.js";
+// import validasiSchema from "../validator/validasi_fishing_spot.js";
 
-const FishingController = {
-  getAll: async (req, res) => {
-    try {
-      const fishings = await fishingModel.getAll();
-      if (!fishings || fishings.length === 0) {
-        return res.status(404).json({
-          message: "Data tidak ditemukan",
-        });
-      }
-      res.json({
-        status: "success",
-        message: "Data berhasil diambil",
-        data: fishings,
-      });
-    } catch (error) {
-      res.status(500).json({
-        status: "error",
-        message: "Gagal mengambil data tempat pemancingan",
-        error: error.message,
-      });
-    }
-  },
+// const FishingController = {
+//   getAll: async (req, res) => {
+//     try {
+//       const fishings = await fishingModel.getAll();
+//       if (!fishings || fishings.length === 0) {
+//         return res.status(404).json({
+//           message: "Data tidak ditemukan",
+//         });
+//       }
+//       res.json({
+//         status: "success",
+//         message: "Data berhasil diambil",
+//         data: fishings,
+//       });
+//     } catch (error) {
+//       res.status(500).json({
+//         status: "error",
+//         message: "Gagal mengambil data tempat pemancingan",
+//         error: error.message,
+//       });
+//     }
+//   },
 
-  getById: async (req, res) => {
-    const id = Number(req.params.id);
-    if (isNaN(id)) {
-      return res
-        .status(400)
-        .json({ status: "error", message: "ID tidak valid" });
-    }
+//   getById: async (req, res) => {
+//     const id = Number(req.params.id);
+//     if (isNaN(id)) {
+//       return res
+//         .status(400)
+//         .json({ status: "error", message: "ID tidak valid" });
+//     }
 
-    try {
-      const fishing = await fishingModel.getById(id);
-      if (!fishing)
-        return res
-          .status(404)
-          .json({ status: "error", message: "Tempat tidak ditemukan" });
+//     try {
+//       const fishing = await fishingModel.getById(id);
+//       if (!fishing)
+//         return res
+//           .status(404)
+//           .json({ status: "error", message: "Tempat tidak ditemukan" });
 
-      res.json({ status: "success", data: fishing });
-    } catch (error) {
-      res.status(500).json({
-        status: "error",
-        message: "Gagal mengambil tempat pemancingan",
-        error: error.message,
-      });
-    }
-  },
+//       res.json({ status: "success", data: fishing });
+//     } catch (error) {
+//       res.status(500).json({
+//         status: "error",
+//         message: "Gagal mengambil tempat pemancingan",
+//         error: error.message,
+//       });
+//     }
+//   },
 
-  create: async (req, res) => {
-    try {
-      const { error, value } = validasiSchema.validate(req.body, {
-        abortEarly: false,
-      });
+//   create: async (req, res) => {
+//     try {
+//       const { error, value } = validasiSchema.validate(req.body, {
+//         abortEarly: false,
+//       });
 
-      if (error) {
-        const errors = error.details.map((detail) => detail.message);
-        return res
-          .status(400)
-          .json({ status: "error", message: "Validasi gagal", errors });
-      }
+//       if (error) {
+//         const errors = error.details.map((detail) => detail.message);
+//         return res
+//           .status(400)
+//           .json({ status: "error", message: "Validasi gagal", errors });
+//       }
 
-      if (!req.file || !req.file.mimetype.startsWith("image/")) {
-        return res
-          .status(400)
-          .json({ status: "error", message: "File harus berupa gambar" });
-      }
+//       if (!req.file || !req.file.mimetype.startsWith("image/")) {
+//         return res
+//           .status(400)
+//           .json({ status: "error", message: "File harus berupa gambar" });
+//       }
 
-      const image = req.file.filename;
+//       const image = req.file.filename;
 
-      const data = {
-        ...value,
-        price_per_hour: parseFloat(value.price_per_hour),
-        image,
-      };
+//       const data = {
+//         ...value,
+//         price_per_hour: parseFloat(value.price_per_hour),
+//         image,
+//       };
 
-      const newFishing = await fishingModel.create(data);
-      res.status(201).json({
-        status: "success",
-        message: "Tempat berhasil dibuat",
-        data: newFishing,
-      });
-    } catch (error) {
-      res.status(500).json({
-        status: "error",
-        message: "Gagal upload tempat pemancingan",
-        error: error.message,
-      });
-    }
-  },
+//       const newFishing = await fishingModel.create(data);
+//       res.status(201).json({
+//         status: "success",
+//         message: "Tempat berhasil dibuat",
+//         data: newFishing,
+//       });
+//     } catch (error) {
+//       res.status(500).json({
+//         status: "error",
+//         message: "Gagal upload tempat pemancingan",
+//         error: error.message,
+//       });
+//     }
+//   },
 
-  update: async (req, res) => {
-    const id = Number(req.params.id);
-    if (isNaN(id)) {
-      return res
-        .status(400)
-        .json({ status: "error", message: "ID tidak valid" });
-    }
+//   update: async (req, res) => {
+//     const id = Number(req.params.id);
+//     if (isNaN(id)) {
+//       return res
+//         .status(400)
+//         .json({ status: "error", message: "ID tidak valid" });
+//     }
 
-    try {
-      const { error, value } = validasiSchema.validate(req.body, {
-        abortEarly: false,
-      });
+//     try {
+//       const { error, value } = validasiSchema.validate(req.body, {
+//         abortEarly: false,
+//       });
 
-      if (error) {
-        const errors = error.details.map((detail) => detail.message);
-        return res
-          .status(400)
-          .json({ status: "error", message: "Validasi gagal", errors });
-      }
+//       if (error) {
+//         const errors = error.details.map((detail) => detail.message);
+//         return res
+//           .status(400)
+//           .json({ status: "error", message: "Validasi gagal", errors });
+//       }
 
-      const data = {
-        ...value,
-        price_per_hour: parseFloat(value.price_per_hour),
-      };
+//       const data = {
+//         ...value,
+//         price_per_hour: parseFloat(value.price_per_hour),
+//       };
 
-      if (req.file) {
-        if (!req.file.mimetype.startsWith("image/")) {
-          return res
-            .status(400)
-            .json({ status: "error", message: "File harus berupa gambar" });
-        }
-        data.image = req.file.filename;
-      }
+//       if (req.file) {
+//         if (!req.file.mimetype.startsWith("image/")) {
+//           return res
+//             .status(400)
+//             .json({ status: "error", message: "File harus berupa gambar" });
+//         }
+//         data.image = req.file.filename;
+//       }
 
-      const updatedFishing = await fishingModel.update(id, data);
+//       const updatedFishing = await fishingModel.update(id, data);
 
-      if (!updatedFishing) {
-        return res.status(404).json({
-          status: "error",
-          message: "Tempat tidak ditemukan untuk diperbarui",
-        });
-      }
+//       if (!updatedFishing) {
+//         return res.status(404).json({
+//           status: "error",
+//           message: "Tempat tidak ditemukan untuk diperbarui",
+//         });
+//       }
 
-      res.json({
-        status: "success",
-        message: "Tempat berhasil diperbarui",
-        data: updatedFishing,
-      });
-    } catch (error) {
-      res.status(500).json({
-        status: "error",
-        message: "Gagal mengubah tempat pemancingan",
-        error: error.message,
-      });
-    }
-  },
+//       res.json({
+//         status: "success",
+//         message: "Tempat berhasil diperbarui",
+//         data: updatedFishing,
+//       });
+//     } catch (error) {
+//       res.status(500).json({
+//         status: "error",
+//         message: "Gagal mengubah tempat pemancingan",
+//         error: error.message,
+//       });
+//     }
+//   },
 
-  delete: async (req, res) => {
-    const id = Number(req.params.id);
-    if (isNaN(id)) {
-      return res
-        .status(400)
-        .json({ status: "error", message: "ID tidak valid" });
-    }
+//   delete: async (req, res) => {
+//     const id = Number(req.params.id);
+//     if (isNaN(id)) {
+//       return res
+//         .status(400)
+//         .json({ status: "error", message: "ID tidak valid" });
+//     }
 
-    try {
-      const fishing = await fishingModel.getById(id);
-      if (!fishing) {
-        return res
-          .status(404)
-          .json({ status: "error", message: "Tempat tidak ditemukan" });
-      }
+//     try {
+//       const fishing = await fishingModel.getById(id);
+//       if (!fishing) {
+//         return res
+//           .status(404)
+//           .json({ status: "error", message: "Tempat tidak ditemukan" });
+//       }
 
-      await fishingModel.delete(id);
+//       await fishingModel.delete(id);
 
-      res.json({ status: "success", message: "Tempat berhasil dihapus" });
-    } catch (error) {
-      res.status(500).json({
-        status: "error",
-        message: "Gagal menghapus tempat pemancingan",
-        error: error.message,
-      });
-    }
-  },
-};
+//       res.json({ status: "success", message: "Tempat berhasil dihapus" });
+//     } catch (error) {
+//       res.status(500).json({
+//         status: "error",
+//         message: "Gagal menghapus tempat pemancingan",
+//         error: error.message,
+//       });
+//     }
+//   },
+// };
 
-export default FishingController;
+// export default FishingController;
