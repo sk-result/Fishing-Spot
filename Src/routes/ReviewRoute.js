@@ -1,6 +1,6 @@
 import express from "express";
 import ReviewController from "../controllers/ReviewController.js";
-import { authenticateToken } from "../middleware/auth.js";
+import { authenticateToken, authorizeRoles } from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -10,13 +10,29 @@ router.get("/", ReviewController.getAll);
 // Ambil review berdasarkan spot ID
 router.get("/spot/:spotId", ReviewController.getBySpotId);
 
-// Buat review
+// Ambil review berdasarkan user ID
+router.get("/user/:userId", ReviewController.getByUserId);
+
+// Ambil rata-rata rating untuk spot tertentu
+router.get("/average/:spotId", ReviewController.getAverageRating);
+
+// Buat review (harus login)
 router.post("/", authenticateToken, ReviewController.create);
 
-// Update review
-router.put("/:id", authenticateToken, ReviewController.update);
+// Update review (harus login & pemilik / admin)
+router.put(
+  "/:id",
+  authenticateToken,
+  authorizeRoles("admin", "super_admin"),
+  ReviewController.update
+);
 
-// Hapus review
-router.delete("/:id", authenticateToken, ReviewController.delete);
+// Hapus review (harus login & pemilik / admin)
+router.delete(
+  "/:id",
+  authenticateToken,
+  authorizeRoles("admin", "super_admin"),
+  ReviewController.delete
+);
 
 export default router;

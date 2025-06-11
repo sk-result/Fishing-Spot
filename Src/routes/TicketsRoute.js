@@ -10,16 +10,21 @@ router.get(
   authorizeRoles("admin", "super_admin"),
   TicketsController.getAll
 );
-router.get("/me", authenticateToken, TicketsController.getMyTickets);
 router.get(
   "/:id",
   authenticateToken,
   authorizeRoles("admin", "super_admin"),
   TicketsController.getById
 );
+router.delete(
+  "/:id",
+  authenticateToken,
+  authorizeRoles("admin", "super_admin"),
+  TicketsController.delete
+);
+router.get("/me", authenticateToken, TicketsController.getMyTickets);
 router.post("/", authenticateToken, TicketsController.create);
 router.put("/:id", authenticateToken, TicketsController.update);
-router.delete("/:id", authenticateToken, TicketsController.delete);
 router.post("/print", authenticateToken, TicketsController.cetakTicket);
 
 export default router;
