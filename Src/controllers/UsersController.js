@@ -89,7 +89,7 @@ const UsersController = {
         });
       }
 
-      const user = await usersModel.getByEmail(value.email);
+      const user = await usersModel.getByEmailNotDeleted(value.email);
       if (!user)
         return res.status(401).json({
           status: "fail",
@@ -237,9 +237,9 @@ const UsersController = {
   },
 
   // Partial update user
-  PartialUpdate: async (req, res) => {
+  UpdateMe: async (req, res) => {
     try {
-      const id = parseInt(req.params.id);
+      const id = req.user.id;
 
       if (req.body.phone_number) {
         req.body.phone_number = req.body.phone_number.replace(/\s+/g, "");
@@ -306,23 +306,6 @@ const UsersController = {
       res.status(500).json({
         message: "Gagal mengupdate user",
         error: err.message,
-      });
-    }
-  },
-
-  // Delete user (user atau admin)
-  Delete: async (req, res) => {
-    const id = parseInt(req.params.id);
-    try {
-      await usersModel.delete(id);
-      res.status(200).json({
-        status: "success",
-        message: "Akun berhasil dihapus",
-      });
-    } catch (error) {
-      res.status(404).json({
-        status: "fail",
-        message: "Data tidak ditemukan",
       });
     }
   },
@@ -482,6 +465,19 @@ const UsersController = {
         status: "error",
         message: "Gagal mengupdate user",
         error: err.message,
+      });
+    }
+  },
+  // Delete user (user atau admin)
+  DeleteById: async (req, res) => {
+    try {
+      const { id } = req.params;
+      await usersModel.softDelete(id);
+      res.status(200).json({ message: "User berhasil dihapus (soft delete)" });
+    } catch (error) {
+      res.status(500).json({
+        message: "Gagal soft delete user",
+        error: error.message,
       });
     }
   },

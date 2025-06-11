@@ -27,12 +27,15 @@ model Users {
   password     String        @db.VarChar(100)
   role         Role          @default(user)
   phone_number String        @db.VarChar(20)
+  deleted      Boolean       @default(false) // ✅ tambahkan ini
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
+
   tickets      tickets[]
   TicketUsage  TicketUsage[]
   Review       Review[]
 }
+
 
 enum Status {
   available

@@ -13,6 +13,16 @@ const usersModel = {
   getByEmail: async (email) => {
     return await prismaClient.users.findUnique({ where: { email } });
   },
+  // Ambil user berdasarkan email yang belum dihapus
+  getByEmailNotDeleted: async (email) => {
+    return prismaClient.users.findFirst({
+      where: {
+        email,
+        deleted: false,
+      },
+    });
+  },
+
   getByUsername: async (username) => {
     return await prismaClient.users.findUnique({ where: { username } });
   },
@@ -22,8 +32,11 @@ const usersModel = {
       data,
     });
   },
-  delete: async (id) => {
-    return await prismaClient.users.delete({ where: { id: Number(id) } });
+  softDelete: async (id) => {
+    return await prismaClient.users.update({
+      where: { id: Number(id) },
+      data: { deleted: true },
+    });
   },
 };
 

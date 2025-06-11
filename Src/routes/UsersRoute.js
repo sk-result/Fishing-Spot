@@ -15,6 +15,9 @@ router.post("/logout", Users.Logout);
 // Profil pribadi
 router.get("/me", authenticateToken, Users.Profile);
 
+router.patch("/", authenticateToken, authorizeOwnerOrAdmin, Users.UpdateMe);
+// router.delete("/:id", authenticateToken, authorizeOwnerOrAdmin, Users.DeleteMe);
+
 // List user umum
 router.get("/profilUserAll", authenticateToken, Users.GetAllUser); // public w/ pagination
 router.get("/profilUserById/:id", authenticateToken, Users.GetById);
@@ -34,15 +37,17 @@ router.post(
   authorizeRoles("super_admin"),
   Users.AdminCreateUser
 );
-router.put("/admin/:id", authenticateToken, authorizeRoles("super_admin"), Users.Update);
-
-// Akses user by ID (admin atau owner)
-router.patch(
-  "/:id",
+router.put(
+  "/admin/:id",
   authenticateToken,
-  authorizeOwnerOrAdmin,
-  Users.PartialUpdate
+  authorizeRoles("super_admin"),
+  Users.Update
 );
-router.delete("/:id", authenticateToken, authorizeOwnerOrAdmin, Users.Delete);
-
+router.delete(
+  "/admin/:id",
+  authenticateToken,
+  authorizeRoles("super_admin"),
+  authorizeOwnerOrAdmin,
+  Users.DeleteById
+);
 export default router;
