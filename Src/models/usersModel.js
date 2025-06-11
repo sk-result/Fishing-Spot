@@ -26,6 +26,7 @@ const usersModel = {
   getByUsername: async (username) => {
     return await prismaClient.users.findUnique({ where: { username } });
   },
+
   update: async (id, data) => {
     return await prismaClient.users.update({
       where: { id: Number(id) },

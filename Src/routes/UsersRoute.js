@@ -37,7 +37,7 @@ router.post(
   authorizeRoles("super_admin"),
   Users.AdminCreateUser
 );
-router.put(
+router.patch(
   "/admin/:id",
   authenticateToken,
   authorizeRoles("super_admin"),
