@@ -25,6 +25,11 @@
       "get": {
         "summary": "Get Ticket by ID",
         "tags": ["Admin: Tickets"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
@@ -177,6 +182,11 @@
       "delete": {
         "summary": "Hapus tiket berdasarkan ID",
         "tags": ["Admin: Tickets"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
@@ -281,6 +291,11 @@
       "post": {
         "summary": "Create fishing spot",
         "tags": ["Admin: Fishing Spot"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -410,30 +425,22 @@
             }
           },
           "401": {
-            "description": "Token tidak valid atau kedaluwarsa",
+            "description": "Unauthorized - token bermasalah",
             "content": {
               "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Token telah kedaluwarsa"
-                        }
-                      }
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Format token tidak valid"
-                        }
-                      }
+                "examples": {
+                  "expired": {
+                    "summary": "Token kadaluwarsa",
+                    "value": {
+                      "message": "Token telah kedaluwarsa"
                     }
-                  ]
+                  },
+                  "invalid": {
+                    "summary": "Token tidak valid",
+                    "value": {
+                      "message": "Format token tidak valid"
+                    }
+                  }
                 }
               }
             }
@@ -530,111 +537,83 @@
     "/api/fishing/{id}": {
       "parameters": [],
       "put": {
-        "summary": "update fishing spot",
-        "parameters": [],
+        "summary": "Update Fishing Spot",
+        "tags": ["Admin: Fishing Spot"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "description": { "type": "string" },
+                  "price_per_hour": { "type": "integer" },
+                  "image": { "type": "string" },
+                  "status": {
+                    "type": "string",
+                    "enum": ["available", "unavailable"]
+                  }
+                },
+                "required": ["name", "description", "price_per_hour", "status"]
+              },
+              "example": {
+                "name": "mancing",
+                "description": "mancinggg ",
+                "price_per_hour": 10000,
+                "image": "1749723345170-Screenshot.png",
+                "status": "available"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "headers": {
-              "X-Powered-By": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Express"
-              },
-              "Content-Type": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "application/json; charset=utf-8"
-              },
-              "Content-Length": {
-                "schema": {
-                  "type": "integer"
-                },
-                "example": "370"
-              },
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "W/\"172-qhYtAvYf98yBYRmcJfOy0y8Q+UA\""
-              },
-              "Date": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Thu, 12 Jun 2025 10:15:45 GMT"
-              },
-              "Connection": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "keep-alive"
-              },
-              "Keep-Alive": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "timeout=5"
-              }
-            },
-            "description": "200 OK",
+            "description": "Tempat berhasil diperbarui",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": {
-                      "type": "string"
-                    },
+                    "status": { "type": "string", "example": "success" },
                     "message": {
-                      "type": "string"
+                      "type": "string",
+                      "example": "Tempat berhasil diperbarui"
                     },
                     "data": {
                       "type": "object",
                       "properties": {
-                        "id": {
-                          "type": "integer"
-                        },
-                        "name": {
-                          "type": "string"
-                        },
-                        "description": {
-                          "type": "string"
-                        },
-                        "price_per_hour": {
-                          "type": "string",
-                          "format": "utc-millisec"
-                        },
-                        "image": {
-                          "type": "string"
-                        },
-                        "status": {
-                          "type": "string"
-                        },
+                        "id": { "type": "integer", "example": 6 },
+                        "name": { "type": "string" },
+                        "description": { "type": "string" },
+                        "price_per_hour": { "type": "integer" },
+                        "image": { "type": "string" },
+                        "status": { "type": "string" },
                         "createdAt": {
                           "type": "string",
                           "format": "date-time"
                         },
-                        "updateAt": {
-                          "type": "string",
-                          "format": "date-time"
-                        },
-                        "userId": {
-                          "type": "integer"
-                        },
+                        "updateAt": { "type": "string", "format": "date-time" },
+                        "userId": { "type": "integer" },
                         "user": {
                           "type": "object",
                           "properties": {
-                            "id": {
-                              "type": "integer"
-                            },
-                            "username": {
-                              "type": "string"
-                            },
-                            "role": {
-                              "type": "string"
-                            }
+                            "id": { "type": "integer" },
+                            "username": { "type": "string" },
+                            "role": { "type": "string" }
                           }
                         }
                       }
@@ -645,61 +624,16 @@
             }
           },
           "400": {
-            "headers": {
-              "X-Powered-By": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Express"
-              },
-              "Content-Type": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "application/json; charset=utf-8"
-              },
-              "Content-Length": {
-                "schema": {
-                  "type": "integer"
-                },
-                "example": "61"
-              },
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "W/\"3d-KNRjzF2NQt/C4bPFM16TdhqlZJI\""
-              },
-              "Date": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Thu, 12 Jun 2025 09:43:42 GMT"
-              },
-              "Connection": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "keep-alive"
-              },
-              "Keep-Alive": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "timeout=5"
-              }
-            },
-            "description": "400 Bad Request",
+            "description": "Bad Request",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": {
-                      "type": "string"
-                    },
+                    "status": { "type": "string", "example": "error" },
                     "message": {
-                      "type": "string"
+                      "type": "string",
+                      "example": "Mohon isi data terlebih dahulu"
                     }
                   }
                 }
@@ -707,126 +641,62 @@
             }
           },
           "401": {
-            "headers": {
-              "X-Powered-By": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Express"
-              },
-              "Content-Type": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "application/json; charset=utf-8"
-              },
-              "Content-Length": {
-                "schema": {
-                  "type": "integer"
-                },
-                "example": "37"
-              },
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "W/\"25-WdjbRpUglIEn09x5CJQk4x7V5UE\""
-              },
-              "Date": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Thu, 12 Jun 2025 09:37:06 GMT"
-              },
-              "Connection": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "keep-alive"
-              },
-              "Keep-Alive": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "timeout=5"
-              }
-            },
-            "description": "401 Unauthorized",
+            "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string"
-                    }
+                "examples": {
+                  "invalid": {
+                    "summary": "Token tidak valid",
+                    "value": { "message": "Format token tidak valid" }
+                  },
+                  "expired": {
+                    "summary": "Token kedaluwarsa",
+                    "value": { "message": "Token telah kedaluwarsa" }
                   }
                 }
               }
             }
           },
           "403": {
-            "headers": {
-              "X-Powered-By": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Express"
-              },
-              "Content-Type": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "application/json; charset=utf-8"
-              },
-              "Content-Length": {
-                "schema": {
-                  "type": "integer"
-                },
-                "example": "56"
-              },
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "W/\"38-FMvFsArZMyqZtOiBeWypToOAMho\""
-              },
-              "Date": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Thu, 12 Jun 2025 09:37:52 GMT"
-              },
-              "Connection": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "keep-alive"
-              },
-              "Keep-Alive": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "timeout=5"
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "role": {
+                    "summary": "Role tidak diizinkan",
+                    "value": {
+                      "message": "Akses ditolak: role 'user' tidak diizinkan"
+                    }
+                  },
+                  "ownership": {
+                    "summary": "Bukan pemilik",
+                    "value": {
+                      "status": "error",
+                      "message": "Anda tidak memiliki izin untuk memperbarui tempat ini"
+                    }
+                  }
+                }
               }
-            },
-            "description": "403 Forbidden",
+            }
+          },
+          "404": {
+            "description": "Not Found",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "status": { "type": "string", "example": "fail" },
                     "message": {
                       "type": "string",
-                      "format": "style"
+                      "example": "Tempat tidak ditemukan"
                     }
                   }
                 }
               }
             }
           }
-        },
-        "tags": ["Admin: Fishing Spot"]
+        }
       },
       "get": {
         "summary": "Get fishing spot by ID",
@@ -909,6 +779,11 @@
       "delete": {
         "summary": "Delete fishing spot",
         "tags": ["Admin: Fishing Spot"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [],
         "responses": {
           "200": {
@@ -929,30 +804,22 @@
             }
           },
           "401": {
-            "description": "Token tidak valid atau kedaluwarsa",
+            "description": "Unauthorized - token bermasalah",
             "content": {
               "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Token telah kedaluwarsa"
-                        }
-                      }
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Format token tidak valid"
-                        }
-                      }
+                "examples": {
+                  "expired": {
+                    "summary": "Token kadaluwarsa",
+                    "value": {
+                      "message": "Token telah kedaluwarsa"
                     }
-                  ]
+                  },
+                  "invalid": {
+                    "summary": "Token tidak valid",
+                    "value": {
+                      "message": "Format token tidak valid"
+                    }
+                  }
                 }
               }
             }
@@ -994,6 +861,11 @@
       "get": {
         "summary": "Get all payments",
         "tags": ["Admin: Payment"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [],
         "responses": {
           "200": {
@@ -1077,30 +949,22 @@
             }
           },
           "401": {
-            "description": "Token tidak valid atau kedaluwarsa",
+            "description": "Unauthorized - token bermasalah",
             "content": {
               "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Format token tidak valid"
-                        }
-                      }
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Token telah kedaluwarsa"
-                        }
-                      }
+                "examples": {
+                  "expired": {
+                    "summary": "Token kadaluwarsa",
+                    "value": {
+                      "message": "Token telah kedaluwarsa"
                     }
-                  ]
+                  },
+                  "invalid": {
+                    "summary": "Token tidak valid",
+                    "value": {
+                      "message": "Format token tidak valid"
+                    }
+                  }
                 }
               }
             }
@@ -1129,6 +993,11 @@
       "get": {
         "summary": "Get payment by ID",
         "tags": ["Admin: Payment"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
@@ -1213,30 +1082,22 @@
             }
           },
           "401": {
-            "description": "Token tidak valid atau kedaluwarsa",
+            "description": "Unauthorized - token bermasalah",
             "content": {
               "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Format token tidak valid"
-                        }
-                      }
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Token telah kedaluwarsa"
-                        }
-                      }
+                "examples": {
+                  "expired": {
+                    "summary": "Token kadaluwarsa",
+                    "value": {
+                      "message": "Token telah kedaluwarsa"
                     }
-                  ]
+                  },
+                  "invalid": {
+                    "summary": "Token tidak valid",
+                    "value": {
+                      "message": "Format token tidak valid"
+                    }
+                  }
                 }
               }
             }
@@ -1279,6 +1140,11 @@
       "delete": {
         "summary": "Delete payment",
         "tags": ["Admin: Payment"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
@@ -1306,30 +1172,22 @@
             }
           },
           "401": {
-            "description": "Token tidak valid atau kedaluwarsa",
+            "description": "Unauthorized - token bermasalah",
             "content": {
               "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Format token tidak valid"
-                        }
-                      }
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Token telah kedaluwarsa"
-                        }
-                      }
+                "examples": {
+                  "expired": {
+                    "summary": "Token kadaluwarsa",
+                    "value": {
+                      "message": "Token telah kedaluwarsa"
                     }
-                  ]
+                  },
+                  "invalid": {
+                    "summary": "Token tidak valid",
+                    "value": {
+                      "message": "Format token tidak valid"
+                    }
+                  }
                 }
               }
             }
@@ -1375,6 +1233,11 @@
       "get": {
         "summary": "Get all usages",
         "tags": ["Admin: Usages"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [],
         "requestBody": {
           "content": {
@@ -1422,30 +1285,22 @@
             }
           },
           "401": {
-            "description": "Token tidak valid atau kedaluwarsa",
+            "description": "Unauthorized - token bermasalah",
             "content": {
               "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Token telah kedaluwarsa"
-                        }
-                      }
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Format token tidak valid"
-                        }
-                      }
+                "examples": {
+                  "expired": {
+                    "summary": "Token kadaluwarsa",
+                    "value": {
+                      "message": "Token telah kedaluwarsa"
                     }
-                  ]
+                  },
+                  "invalid": {
+                    "summary": "Token tidak valid",
+                    "value": {
+                      "message": "Format token tidak valid"
+                    }
+                  }
                 }
               }
             }
@@ -1471,6 +1326,11 @@
       "post": {
         "summary": "Tiket usages",
         "tags": ["Admin: Usages"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -1546,30 +1406,22 @@
             }
           },
           "401": {
-            "description": "Token tidak valid atau kedaluwarsa",
+            "description": "Unauthorized - token bermasalah",
             "content": {
               "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Token telah kedaluwarsa"
-                        }
-                      }
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Format token tidak valid"
-                        }
-                      }
+                "examples": {
+                  "expired": {
+                    "summary": "Token kadaluwarsa",
+                    "value": {
+                      "message": "Token telah kedaluwarsa"
                     }
-                  ]
+                  },
+                  "invalid": {
+                    "summary": "Token tidak valid",
+                    "value": {
+                      "message": "Format token tidak valid"
+                    }
+                  }
                 }
               }
             }
@@ -1668,30 +1520,22 @@
             }
           },
           "401": {
-            "description": "Token tidak valid atau kedaluwarsa",
+            "description": "Unauthorized - token bermasalah",
             "content": {
               "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Format token tidak valid"
-                        }
-                      }
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Token telah kedaluwarsa"
-                        }
-                      }
+                "examples": {
+                  "expired": {
+                    "summary": "Token kadaluwarsa",
+                    "value": {
+                      "message": "Token telah kedaluwarsa"
                     }
-                  ]
+                  },
+                  "invalid": {
+                    "summary": "Token tidak valid",
+                    "value": {
+                      "message": "Format token tidak valid"
+                    }
+                  }
                 }
               }
             }
@@ -1743,30 +1587,22 @@
             }
           },
           "401": {
-            "description": "Token tidak valid atau kedaluwarsa",
+            "description": "Unauthorized - token bermasalah",
             "content": {
               "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Format token tidak valid"
-                        }
-                      }
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Token telah kedaluwarsa"
-                        }
-                      }
+                "examples": {
+                  "expired": {
+                    "summary": "Token kadaluwarsa",
+                    "value": {
+                      "message": "Token telah kedaluwarsa"
                     }
-                  ]
+                  },
+                  "invalid": {
+                    "summary": "Token tidak valid",
+                    "value": {
+                      "message": "Format token tidak valid"
+                    }
+                  }
                 }
               }
             }
@@ -1811,6 +1647,11 @@
       "put": {
         "summary": "Update review",
         "tags": ["Admin: Reviews"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
@@ -1888,30 +1729,22 @@
             }
           },
           "401": {
-            "description": "Token tidak valid atau kedaluwarsa",
+            "description": "Unauthorized - token bermasalah",
             "content": {
               "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Format token tidak valid"
-                        }
-                      }
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Token telah kedaluwarsa"
-                        }
-                      }
+                "examples": {
+                  "expired": {
+                    "summary": "Token kadaluwarsa",
+                    "value": {
+                      "message": "Token telah kedaluwarsa"
                     }
-                  ]
+                  },
+                  "invalid": {
+                    "summary": "Token tidak valid",
+                    "value": {
+                      "message": "Format token tidak valid"
+                    }
+                  }
                 }
               }
             }
@@ -1953,6 +1786,11 @@
       "delete": {
         "summary": "Delete review",
         "tags": ["Admin: Reviews"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
@@ -1979,30 +1817,22 @@
             }
           },
           "401": {
-            "description": "Token tidak valid atau kedaluwarsa",
+            "description": "Unauthorized - token bermasalah",
             "content": {
               "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Format token tidak valid"
-                        }
-                      }
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Token telah kedaluwarsa"
-                        }
-                      }
+                "examples": {
+                  "expired": {
+                    "summary": "Token kadaluwarsa",
+                    "value": {
+                      "message": "Token telah kedaluwarsa"
                     }
-                  ]
+                  },
+                  "invalid": {
+                    "summary": "Token tidak valid",
+                    "value": {
+                      "message": "Format token tidak valid"
+                    }
+                  }
                 }
               }
             }
@@ -2046,18 +1876,12 @@
       "get": {
         "summary": "Get All Admins (Hanya dapat diakses oleh Super Admin)",
         "tags": ["Super Admin: Auth"],
-        "parameters": [
+        "security": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer <token>"
-            },
-            "description": "JWT token Super Admin"
+            "bearerAuth": []
           }
         ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Daftar admin berhasil diambil",
@@ -2152,6 +1976,11 @@
       "post": {
         "summary": "Create (Hanya dapat diakses oleh Super Admin)",
         "tags": ["Super Admin: Auth"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "Content-Type",
@@ -2519,6 +2348,11 @@
       "post": {
         "summary": "Create tiket",
         "tags": ["Tickets"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -2605,32 +2439,22 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Unauthorized - token bermasalah",
             "content": {
               "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "description": "Format token tidak valid",
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Format token tidak valid"
-                        }
-                      }
-                    },
-                    {
-                      "description": "Token telah kedaluwarsa",
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Token telah kedaluwarsa"
-                        }
-                      }
+                "examples": {
+                  "expired": {
+                    "summary": "Token kadaluwarsa",
+                    "value": {
+                      "message": "Token telah kedaluwarsa"
                     }
-                  ]
+                  },
+                  "invalid": {
+                    "summary": "Token tidak valid",
+                    "value": {
+                      "message": "Format token tidak valid"
+                    }
+                  }
                 }
               }
             }
@@ -2658,6 +2482,11 @@
       "get": {
         "summary": "getAllTiket",
         "tags": ["Admin: Tickets"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "Berhasil mengambil semua tiket",
@@ -2811,6 +2640,11 @@
       "get": {
         "summary": "Get my tickets",
         "tags": ["Tickets"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "Berhasil mengambil tiket pengguna",
@@ -2904,35 +2738,22 @@
             }
           },
           "401": {
-            "description": "Token tidak valid atau kedaluwarsa",
+            "description": "Unauthorized - token bermasalah",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Format token tidak valid"
+                "examples": {
+                  "expired": {
+                    "summary": "Token kadaluwarsa",
+                    "value": {
+                      "message": "Token telah kedaluwarsa"
                     }
                   },
-                  "oneOf": [
-                    {
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Format token tidak valid"
-                        }
-                      }
-                    },
-                    {
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Token telah kedaluwarsa"
-                        }
-                      }
+                  "invalid": {
+                    "summary": "Token tidak valid",
+                    "value": {
+                      "message": "Format token tidak valid"
                     }
-                  ]
+                  }
                 }
               }
             }
@@ -2944,6 +2765,11 @@
       "post": {
         "summary": "Cetak tiket",
         "tags": ["Tickets"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -3013,30 +2839,22 @@
             }
           },
           "401": {
-            "description": "Token tidak valid atau kedaluwarsa",
+            "description": "Unauthorized - token bermasalah",
             "content": {
               "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Format token tidak valid"
-                        }
-                      }
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Token telah kedaluwarsa"
-                        }
-                      }
+                "examples": {
+                  "expired": {
+                    "summary": "Token kadaluwarsa",
+                    "value": {
+                      "message": "Token telah kedaluwarsa"
                     }
-                  ]
+                  },
+                  "invalid": {
+                    "summary": "Token tidak valid",
+                    "value": {
+                      "message": "Format token tidak valid"
+                    }
+                  }
                 }
               }
             }
@@ -3084,6 +2902,11 @@
       "get": {
         "summary": "Get My Profile",
         "tags": ["Profile"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "Profil ditemukan",
@@ -3125,30 +2948,22 @@
             }
           },
           "401": {
-            "description": "Token tidak valid atau kedaluwarsa",
+            "description": "Unauthorized - token bermasalah",
             "content": {
               "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Format token tidak valid"
-                        }
-                      }
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Token telah kedaluwarsa"
-                        }
-                      }
+                "examples": {
+                  "expired": {
+                    "summary": "Token kadaluwarsa",
+                    "value": {
+                      "message": "Token telah kedaluwarsa"
                     }
-                  ]
+                  },
+                  "invalid": {
+                    "summary": "Token tidak valid",
+                    "value": {
+                      "message": "Format token tidak valid"
+                    }
+                  }
                 }
               }
             }
@@ -3160,6 +2975,11 @@
       "get": {
         "summary": "Get All Users (Publik)",
         "tags": ["Profile"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "Berhasil mengambil data semua user",
@@ -3206,30 +3026,22 @@
             }
           },
           "401": {
-            "description": "Token tidak valid atau kedaluwarsa",
+            "description": "Unauthorized - token bermasalah",
             "content": {
               "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Format token tidak valid"
-                        }
-                      }
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Token telah kedaluwarsa"
-                        }
-                      }
+                "examples": {
+                  "expired": {
+                    "summary": "Token kadaluwarsa",
+                    "value": {
+                      "message": "Token telah kedaluwarsa"
                     }
-                  ]
+                  },
+                  "invalid": {
+                    "summary": "Token tidak valid",
+                    "value": {
+                      "message": "Format token tidak valid"
+                    }
+                  }
                 }
               }
             }
@@ -3241,6 +3053,11 @@
       "get": {
         "summary": "Get User by ID",
         "tags": ["Profile"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
@@ -3287,30 +3104,22 @@
             }
           },
           "401": {
-            "description": "Token tidak valid atau kedaluwarsa",
+            "description": "Unauthorized - token bermasalah",
             "content": {
               "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Format token tidak valid"
-                        }
-                      }
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Token telah kedaluwarsa"
-                        }
-                      }
+                "examples": {
+                  "expired": {
+                    "summary": "Token kadaluwarsa",
+                    "value": {
+                      "message": "Token telah kedaluwarsa"
                     }
-                  ]
+                  },
+                  "invalid": {
+                    "summary": "Token tidak valid",
+                    "value": {
+                      "message": "Format token tidak valid"
+                    }
+                  }
                 }
               }
             }
@@ -3342,6 +3151,11 @@
       "patch": {
         "summary": "Update User",
         "tags": ["Profile"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -3443,30 +3257,22 @@
             }
           },
           "401": {
-            "description": "Token tidak valid atau kedaluwarsa",
+            "description": "Unauthorized - token bermasalah",
             "content": {
               "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Format token tidak valid"
-                        }
-                      }
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Token telah kedaluwarsa"
-                        }
-                      }
+                "examples": {
+                  "expired": {
+                    "summary": "Token kadaluwarsa",
+                    "value": {
+                      "message": "Token telah kedaluwarsa"
                     }
-                  ]
+                  },
+                  "invalid": {
+                    "summary": "Token tidak valid",
+                    "value": {
+                      "message": "Format token tidak valid"
+                    }
+                  }
                 }
               }
             }
@@ -3478,6 +3284,11 @@
       "post": {
         "summary": "Bayar tiket",
         "tags": ["Payment"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -3545,35 +3356,22 @@
             }
           },
           "401": {
-            "description": "Token tidak valid atau kedaluwarsa",
+            "description": "Unauthorized - token bermasalah",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Format token tidak valid"
+                "examples": {
+                  "expired": {
+                    "summary": "Token kadaluwarsa",
+                    "value": {
+                      "message": "Token telah kedaluwarsa"
                     }
                   },
-                  "oneOf": [
-                    {
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Format token tidak valid"
-                        }
-                      }
-                    },
-                    {
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "Token telah kedaluwarsa"
-                        }
-                      }
+                  "invalid": {
+                    "summary": "Token tidak valid",
+                    "value": {
+                      "message": "Format token tidak valid"
                     }
-                  ]
+                  }
                 }
               }
             }
@@ -3620,6 +3418,11 @@
       "post": {
         "summary": "Create review",
         "tags": ["Reviews"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -3666,18 +3469,20 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Unauthorized - token bermasalah",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "enum": [
-                        "Token telah kedaluwarsa",
-                        "Format token tidak valid"
-                      ]
+                "examples": {
+                  "expired": {
+                    "summary": "Token kadaluwarsa",
+                    "value": {
+                      "message": "Token telah kedaluwarsa"
+                    }
+                  },
+                  "invalid": {
+                    "summary": "Token tidak valid",
+                    "value": {
+                      "message": "Format token tidak valid"
                     }
                   }
                 }
@@ -3892,25 +3697,22 @@
             }
           },
           "401": {
-            "description": "Autentikasi gagal",
+            "description": "Unauthorized - token bermasalah",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "object",
-                  "oneOf": [
-                    {
-                      "properties": {
-                        "status": {
-                          "type": "string",
-                          "example": "fail"
-                        },
-                        "message": {
-                          "type": "string",
-                          "example": ["Password salah", "Email tidak ditemukan"]
-                        }
-                      }
+                "examples": {
+                  "expired": {
+                    "summary": "Token kadaluwarsa",
+                    "value": {
+                      "message": "Token telah kedaluwarsa"
                     }
-                  ]
+                  },
+                  "invalid": {
+                    "summary": "Token tidak valid",
+                    "value": {
+                      "message": "Format token tidak valid"
+                    }
+                  }
                 }
               }
             }
