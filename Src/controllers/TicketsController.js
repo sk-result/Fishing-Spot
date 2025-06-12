@@ -142,65 +142,65 @@ const TicketsController = {
     }
   },
 
-  update: async (req, res) => {
-    try {
-      const id = parseInt(req.params.id, 10);
-      if (!Number.isInteger(id)) {
-        return res.status(400).json(formatError("ID tiket tidak valid"));
-      }
+  // update: async (req, res) => {
+  //   try {
+  //     const id = parseInt(req.params.id, 10);
+  //     if (!Number.isInteger(id)) {
+  //       return res.status(400).json(formatError("ID tiket tidak valid"));
+  //     }
 
-      const { error, value } = validasiSchema.validate(req.body, {
-        abortEarly: false,
-      });
-      if (error) {
-        const errors = error.details.map((detail) => detail.message);
-        return res
-          .status(400)
-          .json(formatError("Validasi gagal", null, errors));
-      }
+  //     const { error, value } = validasiSchema.validate(req.body, {
+  //       abortEarly: false,
+  //     });
+  //     if (error) {
+  //       const errors = error.details.map((detail) => detail.message);
+  //       return res
+  //         .status(400)
+  //         .json(formatError("Validasi gagal", null, errors));
+  //     }
 
-      // Cek apakah tiket ada
-      const existingTicket = await ticketsModel.getById(id);
-      if (!existingTicket) {
-        return res.status(404).json(formatError("Tiket tidak ditemukan"));
-      }
+  //     // Cek apakah tiket ada
+  //     const existingTicket = await ticketsModel.getById(id);
+  //     if (!existingTicket) {
+  //       return res.status(404).json(formatError("Tiket tidak ditemukan"));
+  //     }
 
-      // Cek kepemilikan tiket (opsional, jika sistem hanya mengizinkan pemilik)
-      const userId = req.user?.id;
-      if (existingTicket.user_id !== userId) {
-        return res
-          .status(403)
-          .json(formatError("Akses ditolak, bukan pemilik tiket"));
-      }
+  //     // Cek kepemilikan tiket (opsional, jika sistem hanya mengizinkan pemilik)
+  //     const userId = req.user?.id;
+  //     if (existingTicket.user_id !== userId) {
+  //       return res
+  //         .status(403)
+  //         .json(formatError("Akses ditolak, bukan pemilik tiket"));
+  //     }
 
-      // Cek apakah fishing spot valid
-      const fishingSpot = await ticketsModel.getFishingSpotById(
-        value.fishing_spot_id
-      );
-      if (!fishingSpot) {
-        return res
-          .status(404)
-          .json(formatError("Spot memancing tidak ditemukan"));
-      }
+  //     // Cek apakah fishing spot valid
+  //     const fishingSpot = await ticketsModel.getFishingSpotById(
+  //       value.fishing_spot_id
+  //     );
+  //     if (!fishingSpot) {
+  //       return res
+  //         .status(404)
+  //         .json(formatError("Spot memancing tidak ditemukan"));
+  //     }
 
-      const data = {
-        fishing_spot_id: value.fishing_spot_id,
-        duration_minutes: value.duration_minutes,
-        updated_at: new Date(),
-      };
+  //     const data = {
+  //       fishing_spot_id: value.fishing_spot_id,
+  //       duration_minutes: value.duration_minutes,
+  //       updated_at: new Date(),
+  //     };
 
-      const updatedTicket = await ticketsModel.update(id, data);
+  //     const updatedTicket = await ticketsModel.update(id, data);
 
-      res
-        .status(200)
-        .json(formatSuccess("Tiket berhasil diperbarui", updatedTicket));
-    } catch (error) {
-      console.error(error); // Untuk debugging
-      res
-        .status(500)
-        .json(formatError("Gagal memperbarui tiket", error.message));
-    }
-  },
+  //     res
+  //       .status(200)
+  //       .json(formatSuccess("Tiket berhasil diperbarui", updatedTicket));
+  //   } catch (error) {
+  //     console.error(error); // Untuk debugging
+  //     res
+  //       .status(500)
+  //       .json(formatError("Gagal memperbarui tiket", error.message));
+  //   }
+  // },
 
   delete: async (req, res) => {
     try {

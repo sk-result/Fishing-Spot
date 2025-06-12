@@ -50,6 +50,7 @@ const authorizeOwnerOrAdmin = (req, res, next) => {
     const paramId = parseInt(req.params.id);
 
     if (
+      req.user.role === "user" ||
       req.user.role === "super_admin" ||
       req.user.role === "admin" ||
       userId === paramId

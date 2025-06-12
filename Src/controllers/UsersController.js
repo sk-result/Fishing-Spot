@@ -412,6 +412,22 @@ const UsersController = {
       }
 
       const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({
+          status: "fail",
+          message: "ID user tidak valid",
+        });
+      }
+
+      // Cek apakah user dengan ID tersebut ada
+      const existingUser = await usersModel.getById(id);
+      if (!existingUser) {
+        return res.status(404).json({
+          status: "fail",
+          message: "User dengan ID tersebut tidak ditemukan",
+        });
+      }
+
       const { error, value } = validasiSchema.validasiRegister.validate(
         req.body,
         {
@@ -427,20 +443,22 @@ const UsersController = {
           errors,
         });
       }
+
       if (value.email) {
         const userByEmail = await usersModel.getByEmail(value.email);
         if (userByEmail && userByEmail.id !== id) {
-          return res
-            .status(400)
-            .json({ message: "Email sudah digunakan oleh user lain" });
+          return res.status(400).json({
+            message: "Email sudah digunakan oleh user lain",
+          });
         }
       }
+
       if (value.username) {
         const userByUsername = await usersModel.getByUsername(value.username);
         if (userByUsername && userByUsername.id !== id) {
-          return res
-            .status(400)
-            .json({ message: "Username sudah digunakan oleh user lain" });
+          return res.status(400).json({
+            message: "Username sudah digunakan oleh user lain",
+          });
         }
       }
 
@@ -468,6 +486,7 @@ const UsersController = {
       });
     }
   },
+
   // Delete user (user atau admin)
   DeleteById: async (req, res) => {
     try {

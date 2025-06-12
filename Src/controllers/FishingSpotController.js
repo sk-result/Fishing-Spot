@@ -67,13 +67,22 @@ const FishingController = {
           .status(400)
           .json({ status: "error", message: "File harus berupa gambar" });
       }
+      const userId = req.user?.id;
+      const username = req.user?.username;
 
+      if (!userId) {
+        return res.status(401).json({
+          status: "error",
+          message: "Unauthorized: userId tidak ditemukan",
+        });
+      }
       const image = req.file.filename;
 
       const data = {
         ...value,
         price_per_hour: parseFloat(value.price_per_hour),
         image,
+        userId,
       };
 
       const newFishing = await fishingModel.create(data);
@@ -99,40 +108,67 @@ const FishingController = {
         .json({ status: "error", message: "ID tidak valid" });
     }
 
+    // Validasi data kosong
+    if (!req.body || Object.keys(req.body).length === 0) {
+      return res.status(400).json({
+        status: "error",
+        message: "Mohon isi data terlebih dahulu",
+      });
+    }
+
     try {
+      // Cek apakah tempatnya ada
+      const existingFishing = await fishingModel.getById(id);
+      if (!existingFishing) {
+        return res.status(404).json({
+          status: "error",
+          message: "Tempat pemancingan tidak ditemukan",
+        });
+      }
+
+      if (existingFishing.userId !== req.user.id) {
+        return res.status(403).json({
+          status: "error",
+          message: "Anda tidak memiliki izin untuk memperbarui tempat ini",
+        });
+      }
+
+      // Validasi skema
       const { error, value } = validasiSchema.validate(req.body, {
         abortEarly: false,
       });
 
       if (error) {
         const errors = error.details.map((detail) => detail.message);
-        return res
-          .status(400)
-          .json({ status: "error", message: "Validasi gagal", errors });
+        return res.status(400).json({
+          status: "error",
+          message: "Validasi gagal",
+          errors,
+        });
+      }
+
+      // Validasi file gambar
+      if (!req.file) {
+        return res.status(400).json({
+          status: "error",
+          message: "Gambar wajib diunggah saat memperbarui data",
+        });
+      }
+
+      if (!req.file.mimetype.startsWith("image/")) {
+        return res.status(400).json({
+          status: "error",
+          message: "File harus berupa gambar",
+        });
       }
 
       const data = {
         ...value,
         price_per_hour: parseFloat(value.price_per_hour),
+        image: req.file.filename,
       };
 
-      if (req.file) {
-        if (!req.file.mimetype.startsWith("image/")) {
-          return res
-            .status(400)
-            .json({ status: "error", message: "File harus berupa gambar" });
-        }
-        data.image = req.file.filename;
-      }
-
       const updatedFishing = await fishingModel.update(id, data);
-
-      if (!updatedFishing) {
-        return res.status(404).json({
-          status: "error",
-          message: "Tempat tidak ditemukan untuk diperbarui",
-        });
-      }
 
       res.json({
         status: "success",
@@ -162,6 +198,12 @@ const FishingController = {
         return res
           .status(404)
           .json({ status: "error", message: "Tempat tidak ditemukan" });
+      }
+      if (fishing.userId !== req.user.id) {
+        return res.status(403).json({
+          status: "error",
+          message: "Anda tidak memiliki izin untuk menghapus tempat ini",
+        });
       }
 
       await fishingModel.delete(id);

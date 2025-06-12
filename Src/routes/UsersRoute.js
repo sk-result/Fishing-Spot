@@ -16,7 +16,6 @@ router.post("/logout", Users.Logout);
 router.get("/me", authenticateToken, Users.Profile);
 
 router.patch("/", authenticateToken, authorizeOwnerOrAdmin, Users.UpdateMe);
-// router.delete("/:id", authenticateToken, authorizeOwnerOrAdmin, Users.DeleteMe);
 
 // List user umum
 router.get("/profilUserAll", authenticateToken, Users.GetAllUser); // public w/ pagination

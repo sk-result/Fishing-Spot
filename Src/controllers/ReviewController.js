@@ -70,6 +70,13 @@ const ReviewController = {
 
     try {
       const reviews = await reviewModel.getByFishingSpotId(spotId);
+
+      if (!reviews || reviews.length === 0) {
+        return res
+          .status(404)
+          .json({ message: "Belum ada review untuk spot ini" });
+      }
+
       res.json(reviews);
     } catch (error) {
       console.error(error);
@@ -140,6 +147,13 @@ const ReviewController = {
 
     try {
       const reviews = await reviewModel.getByUserId(userId);
+
+      if (!reviews || reviews.length === 0) {
+        return res
+          .status(404)
+          .json({ message: "User belum pernah membuat review" });
+      }
+
       res.json(reviews);
     } catch (error) {
       res.status(500).json({ error: "Gagal mengambil review user" });

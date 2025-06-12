@@ -19,22 +19,7 @@
         "bearerFormat": "JWT"
       }
     },
-    "CreateReviewInput": {
-      "type": "object",
-      "required": ["fishing_spot_id", "rating", "comment"],
-      "properties": {
-        "fishing_spot_id": { "type": "integer" },
-        "rating": { "type": "integer", "minimum": 1, "maximum": 5 },
-        "comment": { "type": "string" }
-      }
-    },
-    "UpdateReviewInput": {
-      "type": "object",
-      "properties": {
-        "rating": { "type": "integer" },
-        "comment": { "type": "string" }
-      }
-    },
+
     "schemas": {
       "UserRegister": {
         "type": "object",
@@ -259,11 +244,11 @@
                   "email": {
                     "type": "string",
                     "format": "email",
-                    "example": "user@example.com"
+                    "example": "johndoe@example.com"
                   },
                   "password": {
                     "type": "string",
-                    "example": "123456"
+                    "example": "password123"
                   }
                 }
               }
@@ -291,7 +276,7 @@
                         "username": { "type": "string", "example": "john_doe" },
                         "email": {
                           "type": "string",
-                          "example": "user@example.com"
+                          "example": "johndoe@example.com"
                         },
                         "role": { "type": "string", "example": "user" },
                         "phone_number": {
@@ -438,7 +423,7 @@
                         "username": { "type": "string", "example": "john_doe" },
                         "email": {
                           "type": "string",
-                          "example": "user@example.com"
+                          "example": "johndoe@example.com"
                         },
                         "phone_number": {
                           "type": "string",
@@ -700,12 +685,12 @@
                 "properties": {
                   "username": {
                     "type": "string",
-                    "example": "new_username"
+                    "example": "johndoe"
                   },
                   "email": {
                     "type": "string",
                     "format": "email",
-                    "example": "new_email@example.com"
+                    "example": "johndoe@example.com"
                   },
                   "phone_number": {
                     "type": "string",
@@ -742,11 +727,11 @@
                         },
                         "username": {
                           "type": "string",
-                          "example": "new_username"
+                          "example": "johndoe"
                         },
                         "email": {
                           "type": "string",
-                          "example": "new_email@example.com"
+                          "example": "johndoe@example.com"
                         },
                         "phone_number": {
                           "type": "string",
@@ -816,69 +801,6 @@
                     "error": {
                       "type": "string",
                       "example": "Error dari server"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "summary": "Hapus user berdasarkan ID",
-        "tags": ["User"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "ID user yang akan dihapus",
-            "schema": {
-              "type": "integer",
-              "example": 1
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "User berhasil dihapus",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "example": "success"
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Akun berhasil dihapus"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "User tidak ditemukan atau gagal dihapus",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "example": "fail"
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Data tidak ditemukan"
                     }
                   }
                 }
@@ -980,7 +902,7 @@
                   "email": {
                     "type": "string",
                     "format": "email",
-                    "example": "newuser@example.com"
+                    "example": "newjohndoe@example.com"
                   },
                   "password": {
                     "type": "string",
@@ -1014,7 +936,7 @@
                     "email": {
                       "type": "string",
                       "format": "email",
-                      "example": "newuser@example.com"
+                      "example": "newjohndoe@example.com"
                     },
                     "role": { "type": "string", "example": "user" },
                     "phone_number": {
@@ -1073,7 +995,7 @@
       }
     },
     "/users/admins/{id}": {
-      "put": {
+      "patch": {
         "summary": "Update user oleh super_admin (bisa update semua field termasuk role)",
         "tags": ["Admin"],
         "security": [
@@ -1103,7 +1025,7 @@
                   "email": {
                     "type": "string",
                     "format": "email",
-                    "example": "updateduser@example.com"
+                    "example": "updatedjohndoe@example.com"
                   },
                   "password": {
                     "type": "string",
@@ -1143,7 +1065,7 @@
                         },
                         "email": {
                           "type": "string",
-                          "example": "updateduser@example.com"
+                          "example": "updatedjohndoe@example.com"
                         },
                         "phone_number": {
                           "type": "string",
@@ -1199,7 +1121,7 @@
         }
       }
     },
-      "/tickets": {
+    "/tickets": {
       "get": {
         "tags": ["Tickets"],
         "summary": "Ambil semua tiket (admin)",

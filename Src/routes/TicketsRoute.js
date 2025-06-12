@@ -3,6 +3,10 @@ import TicketsController from "../controllers/TicketsController.js";
 import { authenticateToken, authorizeRoles } from "../middleware/auth.js";
 
 const router = express.Router();
+router.get("/me", authenticateToken, TicketsController.getMyTickets);
+router.post("/", authenticateToken, TicketsController.create);
+// router.put("/:id", authenticateToken, TicketsController.update);
+router.post("/print", authenticateToken, TicketsController.cetakTicket);
 
 router.get(
   "/",
@@ -22,9 +26,5 @@ router.delete(
   authorizeRoles("admin", "super_admin"),
   TicketsController.delete
 );
-router.get("/me", authenticateToken, TicketsController.getMyTickets);
-router.post("/", authenticateToken, TicketsController.create);
-router.put("/:id", authenticateToken, TicketsController.update);
-router.post("/print", authenticateToken, TicketsController.cetakTicket);
 
 export default router;

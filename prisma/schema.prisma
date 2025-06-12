@@ -21,21 +21,21 @@ enum Role {
 }
 
 model Users {
-  id           Int           @id @default(autoincrement())
-  username     String        @unique @db.VarChar(50)
-  email        String        @unique @db.VarChar(100)
-  password     String        @db.VarChar(100)
-  role         Role          @default(user)
-  phone_number String        @db.VarChar(20)
-  deleted      Boolean       @default(false) // ✅ tambahkan ini
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  id           Int      @id @default(autoincrement())
+  username     String   @unique @db.VarChar(50)
+  email        String   @unique @db.VarChar(100)
+  password     String   @db.VarChar(100)
+  role         Role     @default(user)
+  phone_number String   @db.VarChar(20)
+  deleted      Boolean  @default(false) // ✅ tambahkan ini
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  tickets      tickets[]
-  TicketUsage  TicketUsage[]
-  Review       Review[]
+  tickets     tickets[]
+  TicketUsage TicketUsage[]
+  Review      Review[]
+  fishing     Fishing[]
 }
-
 
 enum Status {
   available
@@ -43,18 +43,19 @@ enum Status {
 }
 
 model Fishing {
-  id             Int      @id @default(autoincrement())
-  name           String   @db.VarChar(50)
-  description    String   @db.Text()
-  price_per_hour Decimal  @db.Decimal()
-  image          String   @db.VarChar(100)
+  id             Int           @id @default(autoincrement())
+  name           String        @db.VarChar(50)
+  description    String        @db.Text()
+  price_per_hour Decimal       @db.Decimal()
+  image          String        @db.VarChar(100)
   status         Status
-  createdAt      DateTime @default(now())
-  updateAt       DateTime @default(now()) @updatedAt
-
-  tickets      tickets[]
-  ticketUsages TicketUsage[] // tambahkan ini
-  Review       Review[]
+  createdAt      DateTime      @default(now())
+  updateAt       DateTime      @default(now()) @updatedAt
+  userId         Int
+  user           Users         @relation(fields: [userId], references: [id])
+  tickets        tickets[]
+  ticketUsages   TicketUsage[] // tambahkan ini
+  Review         Review[]
 
   @@map("fishing")
 }
