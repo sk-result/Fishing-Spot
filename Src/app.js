@@ -5,6 +5,7 @@ import UsersRoutes from "./routes/UsersRoute.js";
 import TicketsRoute from "./routes/TicketsRoute.js";
 import PaymentRoute from "./routes/PaymentRoute.js";
 import ReviewRoute from "./routes/ReviewRoute.js";
+import cors from "cors";
 
 import swaggerUi from "swagger-ui-express";
 import fs from "fs";
@@ -18,9 +19,8 @@ const swaggerDocument = JSON.parse(
   fs.readFileSync(path.join(__dirname, "../swagger.json"), "utf8")
 );
 
-
 const app = express();
-
+app.use(cors());
 app.use(express.json());
 
 app.use("/api/fishing", fishingRoutes);
@@ -29,7 +29,11 @@ app.use("/api/usages", TicketsUsagesRoute);
 app.use("/api/users", UsersRoutes);
 app.use("/api/payment", PaymentRoute);
 app.use("/api/reviews", ReviewRoute);
-
+app.use(
+  cors({
+    origin: "https://fishing-spot-production.up.railway.app",
+  })
+);
 // Serve Swagger UI di route /api-docs
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
