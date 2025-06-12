@@ -31,7 +31,7 @@ const fishingModel = {
       where: { id: Number(id) },
       include: {
         user: {
-          select: { id: true, username: true, role: true },
+          select: { id: true, username: true },
         },
       },
     });
@@ -42,7 +42,7 @@ const fishingModel = {
       data,
       include: {
         user: {
-          select: { id: true, username: true, role: true },
+          select: { id: true, username: true },
         },
       },
     });

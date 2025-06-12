@@ -1207,109 +1207,62 @@
         "tags": ["Admin: Fishing Spot"]
       },
       "get": {
-        "summary": "getAll",
-        "parameters": [],
+        "summary": "Get all fishing spots",
+        "tags": ["Fishing Spot"],
         "responses": {
           "200": {
-            "headers": {
-              "X-Powered-By": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Express"
-              },
-              "Content-Type": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "application/json; charset=utf-8"
-              },
-              "Content-Length": {
-                "schema": {
-                  "type": "integer"
-                },
-                "example": "1480"
-              },
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "W/\"5c8-uzJAMh2Id+eLCsF3/GGDKzYl2bs\""
-              },
-              "Date": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Thu, 12 Jun 2025 10:23:57 GMT"
-              },
-              "Connection": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "keep-alive"
-              },
-              "Keep-Alive": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "timeout=5"
-              }
-            },
-            "description": "200 OK",
+            "description": "Data berhasil diambil",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": {
-                      "type": "string"
-                    },
+                    "status": { "type": "string", "example": "success" },
                     "message": {
-                      "type": "string"
+                      "type": "string",
+                      "example": "Data berhasil diambil"
                     },
                     "data": {
                       "type": "array",
                       "items": {
                         "type": "object",
                         "properties": {
-                          "id": {
-                            "type": "integer"
-                          },
-                          "name": {
-                            "type": "string"
-                          },
+                          "id": { "type": "integer", "example": 1 },
+                          "name": { "type": "string", "example": "mancing" },
                           "description": {
-                            "type": "string"
+                            "type": "string",
+                            "example": "mancinggg "
                           },
                           "price_per_hour": {
                             "type": "string",
-                            "format": "utc-millisec"
+                            "example": "10000"
                           },
                           "image": {
-                            "type": "string"
+                            "type": "string",
+                            "example": "1749723084657-Screenshot.png"
                           },
                           "status": {
-                            "type": "string"
+                            "type": "string",
+                            "example": "available"
                           },
                           "createdAt": {
                             "type": "string",
-                            "format": "date-time"
+                            "format": "date-time",
+                            "example": "2025-06-12T10:05:08.277Z"
                           },
                           "updateAt": {
                             "type": "string",
-                            "format": "date-time"
+                            "format": "date-time",
+                            "example": "2025-06-12T10:11:24.674Z"
                           },
-                          "userId": {
-                            "type": "integer"
-                          },
+                          "userId": { "type": "integer", "example": 1 },
                           "user": {
                             "type": "object",
                             "properties": {
-                              "id": {
-                                "type": "integer"
-                              },
+                              "id": { "type": "integer", "example": 1 },
                               "username": {
-                                "type": "string"
+                                "type": "string",
+                                "example": "john_doe1"
                               }
                             }
                           }
@@ -1321,11 +1274,10 @@
               }
             }
           }
-        },
-        "tags": ["Fishing Spot"]
+        }
       }
     },
-    "/api/fishing/1": {
+    "/api/fishing/{id}": {
       "parameters": [],
       "put": {
         "summary": "update fishing spot",
@@ -1627,107 +1579,54 @@
         "tags": ["Admin: Fishing Spot"]
       },
       "get": {
-        "summary": "getById",
+        "summary": "Get fishing spot by ID",
+        "tags": ["Fishing Spot"],
         "parameters": [],
         "responses": {
           "200": {
-            "headers": {
-              "X-Powered-By": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Express"
-              },
-              "Content-Type": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "application/json; charset=utf-8"
-              },
-              "Content-Length": {
-                "schema": {
-                  "type": "integer"
-                },
-                "example": "331"
-              },
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "W/\"14b-Rh5PCh/83pRpFuZdrvLG4lfJ/1U\""
-              },
-              "Date": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Thu, 12 Jun 2025 10:21:17 GMT"
-              },
-              "Connection": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "keep-alive"
-              },
-              "Keep-Alive": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "timeout=5"
-              }
-            },
-            "description": "200 OK",
+            "description": "Data ditemukan",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": {
-                      "type": "string"
-                    },
+                    "status": { "type": "string", "example": "success" },
                     "data": {
                       "type": "object",
                       "properties": {
-                        "id": {
-                          "type": "integer"
-                        },
-                        "name": {
-                          "type": "string"
-                        },
+                        "id": { "type": "integer", "example": 1 },
+                        "name": { "type": "string", "example": "mancing" },
                         "description": {
-                          "type": "string"
+                          "type": "string",
+                          "example": "mancinggg "
                         },
                         "price_per_hour": {
                           "type": "string",
-                          "format": "utc-millisec"
+                          "example": "10000"
                         },
                         "image": {
-                          "type": "string"
+                          "type": "string",
+                          "example": "1749723084657-Screenshot 2025-02-25 194936.png"
                         },
-                        "status": {
-                          "type": "string"
-                        },
+                        "status": { "type": "string", "example": "available" },
                         "createdAt": {
                           "type": "string",
-                          "format": "date-time"
+                          "format": "date-time",
+                          "example": "2025-06-12T10:05:08.277Z"
                         },
                         "updateAt": {
                           "type": "string",
-                          "format": "date-time"
+                          "format": "date-time",
+                          "example": "2025-06-12T10:11:24.674Z"
                         },
-                        "userId": {
-                          "type": "integer"
-                        },
+                        "userId": { "type": "integer", "example": 1 },
                         "user": {
                           "type": "object",
                           "properties": {
-                            "id": {
-                              "type": "integer"
-                            },
+                            "id": { "type": "integer", "example": 1 },
                             "username": {
-                              "type": "string"
-                            },
-                            "role": {
-                              "type": "string"
+                              "type": "string",
+                              "example": "john_doe1"
                             }
                           }
                         }
@@ -1739,69 +1638,23 @@
             }
           },
           "404": {
-            "headers": {
-              "X-Powered-By": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Express"
-              },
-              "Content-Type": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "application/json; charset=utf-8"
-              },
-              "Content-Length": {
-                "schema": {
-                  "type": "integer"
-                },
-                "example": "53"
-              },
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "W/\"35-fX97RTFMs1J+eZp3Qnf3uh+xt98\""
-              },
-              "Date": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Thu, 12 Jun 2025 08:31:03 GMT"
-              },
-              "Connection": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "keep-alive"
-              },
-              "Keep-Alive": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "timeout=5"
-              }
-            },
-            "description": "404 Not Found",
+            "description": "Tempat tidak ditemukan",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": {
-                      "type": "string"
-                    },
+                    "status": { "type": "string", "example": "error" },
                     "message": {
-                      "type": "string"
+                      "type": "string",
+                      "example": "Tempat tidak ditemukan"
                     }
                   }
                 }
               }
             }
           }
-        },
-        "tags": ["Fishing Spot"]
+        }
       }
     },
     "/api/fishing/5": {
@@ -6633,94 +6486,41 @@
       }
     },
     "/api/users/me": {
-      "parameters": [],
       "get": {
         "summary": "Get My Profile",
-        "parameters": [
-          {
-            "name": "Content-Type",
-            "in": "header",
-            "required": false,
-            "example": "application/json",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "tags": ["Profile"],
         "responses": {
           "200": {
-            "headers": {
-              "X-Powered-By": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Express"
-              },
-              "Content-Type": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "application/json; charset=utf-8"
-              },
-              "Content-Length": {
-                "schema": {
-                  "type": "integer"
-                },
-                "example": "154"
-              },
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "W/\"9a-2LnKLws132gJUfPCW5sLZFh5W3s\""
-              },
-              "Date": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Thu, 12 Jun 2025 08:12:10 GMT"
-              },
-              "Connection": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "keep-alive"
-              },
-              "Keep-Alive": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "timeout=5"
-              }
-            },
-            "description": "200 OK",
+            "description": "Profil ditemukan",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
                     "status": {
-                      "type": "string"
+                      "type": "string",
+                      "example": "success"
                     },
                     "message": {
-                      "type": "string"
+                      "type": "string",
+                      "example": "Data profil ditemukan"
                     },
                     "user": {
                       "type": "object",
                       "properties": {
-                        "id": {
-                          "type": "integer"
-                        },
+                        "id": { "type": "integer", "example": 3 },
                         "username": {
-                          "type": "string"
+                          "type": "string",
+                          "example": "john_doe123"
                         },
                         "email": {
                           "type": "string",
-                          "format": "email"
+                          "format": "email",
+                          "example": "john123@example.com"
                         },
                         "phone_number": {
                           "type": "string",
-                          "format": "utc-millisec"
+                          "example": "08123456789"
                         }
                       }
                     }
@@ -6730,147 +6530,64 @@
             }
           },
           "401": {
-            "headers": {
-              "X-Powered-By": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Express"
-              },
-              "Content-Type": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "application/json; charset=utf-8"
-              },
-              "Content-Length": {
-                "schema": {
-                  "type": "integer"
-                },
-                "example": "38"
-              },
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "W/\"26-KeUji/u39fOho2xab4vKfzJ0yNY\""
-              },
-              "Date": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Thu, 12 Jun 2025 08:12:46 GMT"
-              },
-              "Connection": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "keep-alive"
-              },
-              "Keep-Alive": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "timeout=5"
-              }
-            },
-            "description": "401 Unauthorized",
+            "description": "Token tidak valid atau kedaluwarsa",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string"
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "Format token tidak valid"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "Token telah kedaluwarsa"
+                        }
+                      }
                     }
-                  }
+                  ]
                 }
               }
             }
           }
-        },
-        "tags": ["Profile"]
+        }
       }
     },
-
     "/api/users/profilUserAll": {
-      "parameters": [],
       "get": {
         "summary": "Get All Users (Publik)",
-        "parameters": [
-          {
-            "name": "Content-Type",
-            "in": "header",
-            "required": false,
-            "example": "application/json",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "tags": ["Profile"],
         "responses": {
           "200": {
-            "headers": {
-              "X-Powered-By": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Express"
-              },
-              "Content-Type": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "application/json; charset=utf-8"
-              },
-              "Content-Length": {
-                "schema": {
-                  "type": "integer"
-                },
-                "example": "439"
-              },
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "W/\"1b7-EfS9MHQyXZvX8+7PxDBl0WyR3BQ\""
-              },
-              "Date": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Thu, 12 Jun 2025 08:14:47 GMT"
-              },
-              "Connection": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "keep-alive"
-              },
-              "Keep-Alive": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "timeout=5"
-              }
-            },
-            "description": "200 OK",
+            "description": "Berhasil mengambil data semua user",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
                     "status": {
-                      "type": "string"
+                      "type": "string",
+                      "example": "success"
                     },
                     "message": {
-                      "type": "string"
+                      "type": "string",
+                      "example": "Data user berhasil diambil"
                     },
                     "page": {
-                      "type": "integer"
+                      "type": "integer",
+                      "example": 1
                     },
                     "limit": {
-                      "type": "integer"
+                      "type": "integer",
+                      "example": 10
                     },
                     "users": {
                       "type": "array",
@@ -6878,11 +6595,12 @@
                         "type": "object",
                         "properties": {
                           "username": {
-                            "type": "string"
+                            "type": "string",
+                            "example": "john_doe123"
                           },
                           "phone_number": {
                             "type": "string",
-                            "format": "utc-millisec"
+                            "example": "08123456789"
                           }
                         }
                       }
@@ -6893,150 +6611,78 @@
             }
           },
           "401": {
-            "headers": {
-              "X-Powered-By": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Express"
-              },
-              "Content-Type": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "application/json; charset=utf-8"
-              },
-              "Content-Length": {
-                "schema": {
-                  "type": "integer"
-                },
-                "example": "38"
-              },
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "W/\"26-KeUji/u39fOho2xab4vKfzJ0yNY\""
-              },
-              "Date": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Thu, 12 Jun 2025 08:15:56 GMT"
-              },
-              "Connection": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "keep-alive"
-              },
-              "Keep-Alive": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "timeout=5"
-              }
-            },
-            "description": "401 Unauthorized",
+            "description": "Token tidak valid atau kedaluwarsa",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string"
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "Format token tidak valid"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "Token telah kedaluwarsa"
+                        }
+                      }
                     }
-                  }
+                  ]
                 }
               }
             }
           }
-        },
-        "tags": ["Profile"]
+        }
       }
     },
-    "/api/users/profilUserById/9": {
-      "parameters": [],
+    "/api/users/profilUserById/{id}": {
       "get": {
         "summary": "Get User by ID",
+        "tags": ["Profile"],
         "parameters": [
           {
-            "name": "Content-Type",
-            "in": "header",
-            "required": false,
-            "example": "application/json",
+            "name": "id",
+            "in": "path",
+            "required": true,
             "schema": {
-              "type": "string"
-            }
+              "type": "integer"
+            },
+            "example": 1
           }
         ],
         "responses": {
           "200": {
-            "headers": {
-              "X-Powered-By": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Express"
-              },
-              "Content-Type": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "application/json; charset=utf-8"
-              },
-              "Content-Length": {
-                "schema": {
-                  "type": "integer"
-                },
-                "example": "90"
-              },
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "W/\"5a-7RHsoizkcPrN/xYA/XV7voj6G8w\""
-              },
-              "Date": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Thu, 12 Jun 2025 08:16:24 GMT"
-              },
-              "Connection": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "keep-alive"
-              },
-              "Keep-Alive": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "timeout=5"
-              }
-            },
-            "description": "200 OK",
+            "description": "Berhasil mengambil data user berdasarkan ID",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
                     "status": {
-                      "type": "string"
+                      "type": "string",
+                      "example": "success"
                     },
                     "user": {
                       "type": "object",
                       "properties": {
                         "id": {
-                          "type": "integer"
+                          "type": "integer",
+                          "example": 1
                         },
                         "username": {
-                          "type": "string"
+                          "type": "string",
+                          "example": "john_doe126"
                         },
                         "phone_number": {
                           "type": "string",
-                          "format": "utc-millisec"
+                          "example": "08123456780"
                         }
                       }
                     }
@@ -7046,228 +6692,124 @@
             }
           },
           "401": {
-            "headers": {
-              "X-Powered-By": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Express"
-              },
-              "Content-Type": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "application/json; charset=utf-8"
-              },
-              "Content-Length": {
-                "schema": {
-                  "type": "integer"
-                },
-                "example": "38"
-              },
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "W/\"26-KeUji/u39fOho2xab4vKfzJ0yNY\""
-              },
-              "Date": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Thu, 12 Jun 2025 08:16:37 GMT"
-              },
-              "Connection": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "keep-alive"
-              },
-              "Keep-Alive": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "timeout=5"
-              }
-            },
-            "description": "401 Unauthorized",
+            "description": "Token tidak valid atau kedaluwarsa",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string"
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "Format token tidak valid"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "Token telah kedaluwarsa"
+                        }
+                      }
                     }
-                  }
+                  ]
                 }
               }
             }
           },
           "404": {
-            "headers": {
-              "X-Powered-By": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Express"
-              },
-              "Content-Type": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "application/json; charset=utf-8"
-              },
-              "Content-Length": {
-                "schema": {
-                  "type": "integer"
-                },
-                "example": "50"
-              },
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "W/\"32-i24p/49pQhRZHv8ijCKnFiP0eQ4\""
-              },
-              "Date": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Thu, 12 Jun 2025 08:58:08 GMT"
-              },
-              "Connection": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "keep-alive"
-              },
-              "Keep-Alive": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "timeout=5"
-              }
-            },
-            "description": "404 Not Found",
+            "description": "User tidak ditemukan",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
                     "status": {
-                      "type": "string"
+                      "type": "string",
+                      "example": "fail"
                     },
                     "message": {
-                      "type": "string"
+                      "type": "string",
+                      "example": "User tidak ditemukan"
                     }
                   }
                 }
               }
             }
           }
-        },
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object"
-              }
-            }
-          }
-        },
-        "tags": ["Profile"]
+        }
       }
     },
     "/api/users": {
-      "parameters": [],
       "patch": {
         "summary": "Update User",
-        "parameters": [
-          {
-            "name": "Content-Type",
-            "in": "header",
-            "required": false,
-            "example": "application/json",
-            "schema": {
-              "type": "string"
+        "tags": ["Profile"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "example": "john_doe1"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "john@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password123"
+                  },
+                  "phone_number": {
+                    "type": "string",
+                    "example": "08123456780"
+                  }
+                }
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
-            "headers": {
-              "X-Powered-By": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Express"
-              },
-              "Content-Type": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "application/json; charset=utf-8"
-              },
-              "Content-Length": {
-                "schema": {
-                  "type": "integer"
-                },
-                "example": "150"
-              },
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "W/\"96-tXwQxEzgDEx6dwCS2/LdN1PK+fI\""
-              },
-              "Date": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Thu, 12 Jun 2025 08:20:03 GMT"
-              },
-              "Connection": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "keep-alive"
-              },
-              "Keep-Alive": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "timeout=5"
-              }
-            },
-            "description": "200 OK",
+            "description": "User berhasil diupdate",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
                     "message": {
-                      "type": "string"
+                      "type": "string",
+                      "example": "User berhasil diupdate"
                     },
                     "user": {
                       "type": "object",
                       "properties": {
                         "id": {
-                          "type": "integer"
+                          "type": "integer",
+                          "example": 3
                         },
                         "username": {
-                          "type": "string"
+                          "type": "string",
+                          "example": "john_doe1"
                         },
                         "email": {
                           "type": "string",
-                          "format": "email"
+                          "example": "john@example.com"
                         },
                         "phone_number": {
                           "type": "string",
-                          "format": "utc-millisec"
+                          "example": "08123456780"
                         },
                         "role": {
-                          "type": "string"
+                          "type": "string",
+                          "example": "user"
                         }
                       }
                     }
@@ -7277,150 +6819,64 @@
             }
           },
           "400": {
-            "headers": {
-              "X-Powered-By": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Express"
-              },
-              "Content-Type": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "application/json; charset=utf-8"
-              },
-              "Content-Length": {
-                "schema": {
-                  "type": "integer"
-                },
-                "example": "53"
-              },
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "W/\"35-dqvzrDcgKAo4TyDN14GmrP527lE\""
-              },
-              "Date": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Thu, 12 Jun 2025 08:21:48 GMT"
-              },
-              "Connection": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "keep-alive"
-              },
-              "Keep-Alive": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "timeout=5"
-              }
-            },
-            "description": "400 Bad Request",
+            "description": "Kesalahan data input (username/email sudah digunakan)",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string"
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "Username sudah digunakan oleh user lain"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "Email sudah digunakan oleh user lain"
+                        }
+                      }
                     }
-                  }
+                  ]
                 }
               }
             }
           },
           "401": {
-            "headers": {
-              "X-Powered-By": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Express"
-              },
-              "Content-Type": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "application/json; charset=utf-8"
-              },
-              "Content-Length": {
-                "schema": {
-                  "type": "integer"
-                },
-                "example": "38"
-              },
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "W/\"26-KeUji/u39fOho2xab4vKfzJ0yNY\""
-              },
-              "Date": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Thu, 12 Jun 2025 08:44:43 GMT"
-              },
-              "Connection": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "keep-alive"
-              },
-              "Keep-Alive": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "timeout=5"
-              }
-            },
-            "description": "401 Unauthorized",
+            "description": "Token tidak valid atau kedaluwarsa",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string"
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "Format token tidak valid"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "Token telah kedaluwarsa"
+                        }
+                      }
                     }
-                  }
+                  ]
                 }
               }
             }
           }
-        },
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "username": {
-                    "type": "string"
-                  },
-                  "email": {
-                    "type": "string",
-                    "format": "email"
-                  },
-                  "password": {
-                    "type": "string"
-                  },
-                  "phone_number": {
-                    "type": "string",
-                    "format": "utc-millisec"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "tags": ["Profile"]
+        }
       }
     },
     "/api/payment/pembayaran": {
@@ -8186,103 +7642,78 @@
       }
     },
     "/api/users/login": {
-      "parameters": [],
       "post": {
-        "summary": "login",
-        "parameters": [
-          {
-            "name": "Content-Type",
-            "in": "header",
-            "required": false,
-            "example": "application/json",
-            "schema": {
-              "type": "string"
+        "summary": "Login pengguna",
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "john123@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password123"
+                  }
+                }
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
-            "headers": {
-              "X-Powered-By": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Express"
-              },
-              "Content-Type": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "application/json; charset=utf-8"
-              },
-              "Content-Length": {
-                "schema": {
-                  "type": "integer"
-                },
-                "example": "418"
-              },
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "W/\"1a2-eRGacws16Tk7F/X3cwtxk/zte1w\""
-              },
-              "Date": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Thu, 12 Jun 2025 04:48:36 GMT"
-              },
-              "Connection": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "keep-alive"
-              },
-              "Keep-Alive": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "timeout=5"
-              }
-            },
-            "description": "200 OK",
+            "description": "Login berhasil",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
                     "status": {
-                      "type": "string"
+                      "type": "string",
+                      "example": "success"
                     },
                     "message": {
-                      "type": "string"
+                      "type": "string",
+                      "example": "Login berhasil"
                     },
                     "token": {
-                      "type": "string"
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
                     },
                     "user": {
                       "type": "object",
                       "properties": {
                         "id": {
-                          "type": "integer"
+                          "type": "integer",
+                          "example": 3
                         },
                         "username": {
-                          "type": "string"
+                          "type": "string",
+                          "example": "john_doe123"
                         },
                         "email": {
                           "type": "string",
-                          "format": "email"
+                          "format": "email",
+                          "example": "john123@example.com"
                         },
                         "role": {
-                          "type": "string"
+                          "type": "string",
+                          "example": "user"
                         },
                         "phone_number": {
                           "type": "string",
-                          "format": "utc-millisec"
+                          "example": "08123456789"
                         },
                         "expiresIn": {
-                          "type": "string"
+                          "type": "string",
+                          "example": "5h"
                         }
                       }
                     }
@@ -8292,66 +7723,25 @@
             }
           },
           "400": {
-            "headers": {
-              "X-Powered-By": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Express"
-              },
-              "Content-Type": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "application/json; charset=utf-8"
-              },
-              "Content-Length": {
-                "schema": {
-                  "type": "integer"
-                },
-                "example": "104"
-              },
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "W/\"68-cbDa448k+/0qPWlfhOOnxmr9dqs\""
-              },
-              "Date": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Thu, 12 Jun 2025 08:09:42 GMT"
-              },
-              "Connection": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "keep-alive"
-              },
-              "Keep-Alive": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "timeout=5"
-              }
-            },
-            "description": "400 Bad Request",
+            "description": "Validasi gagal",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
                     "status": {
-                      "type": "string"
+                      "type": "string",
+                      "example": "fail"
                     },
                     "message": {
-                      "type": "string"
+                      "type": "string",
+                      "example": "Validasi login gagal"
                     },
                     "errors": {
                       "type": "array",
                       "items": {
-                        "type": "string"
+                        "type": "string",
+                        "example": ["email wajib diisi", "password wajib diisi"]
                       }
                     }
                   }
@@ -8360,172 +7750,105 @@
             }
           },
           "401": {
-            "headers": {
-              "X-Powered-By": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Express"
-              },
-              "Content-Type": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "application/json; charset=utf-8"
-              },
-              "Content-Length": {
-                "schema": {
-                  "type": "integer"
-                },
-                "example": "44"
-              },
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "W/\"2c-mQ4m4j7VGJMuGqz+GNxqV+o+69U\""
-              },
-              "Date": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Thu, 12 Jun 2025 08:10:17 GMT"
-              },
-              "Connection": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "keep-alive"
-              },
-              "Keep-Alive": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "timeout=5"
-              }
-            },
-            "description": "401 Unauthorized",
+            "description": "Autentikasi gagal",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
+                  "oneOf": [
+                    {
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "example": "fail"
+                        },
+                        "message": {
+                          "type": "string",
+                          "example": ["Password salah", "Email tidak ditemukan"]
+                        }
+                      }
                     }
-                  }
+                  ]
                 }
               }
             }
           }
-        },
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "email": {
-                    "type": "string",
-                    "format": "email"
-                  },
-                  "password": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "tags": ["Auth"]
+        }
       }
     },
     "/api/users/register": {
-      "parameters": [],
       "post": {
         "summary": "register",
+        "tags": ["Auth"],
         "parameters": [
           {
             "name": "Content-Type",
             "in": "header",
             "required": false,
-            "example": "application/json",
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "application/json"
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "example": "john_doe123"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "john123@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password123"
+                  },
+                  "phone_number": {
+                    "type": "string",
+                    "example": "+62 858 9228 8393"
+                  }
+                },
+                "required": ["username", "email", "password", "phone_number"]
+              }
+            }
+          }
+        },
         "responses": {
           "201": {
-            "headers": {
-              "X-Powered-By": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Express"
-              },
-              "Content-Type": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "application/json; charset=utf-8"
-              },
-              "Content-Length": {
-                "schema": {
-                  "type": "integer"
-                },
-                "example": "115"
-              },
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "W/\"73-i5LRKxNKK5RBI3ijngf7clsVvYE\""
-              },
-              "Date": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Thu, 12 Jun 2025 08:04:59 GMT"
-              },
-              "Connection": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "keep-alive"
-              },
-              "Keep-Alive": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "timeout=5"
-              }
-            },
-            "description": "201 Created",
+            "description": "User berhasil terdaftar",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
                     "id": {
-                      "type": "integer"
+                      "type": "integer",
+                      "example": 5
                     },
                     "username": {
-                      "type": "string"
+                      "type": "string",
+                      "example": "john_doe123"
                     },
                     "email": {
                       "type": "string",
-                      "format": "email"
+                      "format": "email",
+                      "example": "john123@example.com"
                     },
                     "role": {
-                      "type": "string"
+                      "type": "string",
+                      "example": "user"
                     },
                     "phone_number": {
                       "type": "string",
-                      "format": "utc-millisec"
+                      "example": "+62 858 9228 8393"
                     }
                   }
                 }
@@ -8533,162 +7856,96 @@
             }
           },
           "400": {
-            "headers": {
-              "X-Powered-By": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Express"
-              },
-              "Content-Type": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "application/json; charset=utf-8"
-              },
-              "Content-Length": {
-                "schema": {
-                  "type": "integer"
-                },
-                "example": "92"
-              },
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "W/\"5c-NgfdG3fjYJqT8baeuRgL7WswhZE\""
-              },
-              "Date": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Thu, 12 Jun 2025 08:03:46 GMT"
-              },
-              "Connection": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "keep-alive"
-              },
-              "Keep-Alive": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "timeout=5"
-              }
-            },
-            "description": "400 Bad Request",
+            "description": "Validasi atau duplikasi data gagal",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string"
+
+                  "oneOf": [
+                    {
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "Registrasi gagal"
+                        },
+                        "errors": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "example": [
+                            "Username sudah digunakan",
+                            "Email sudah digunakan"
+                          ]
+                        }
+                      }
                     },
-                    "errors": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
+                    {
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "Validasi gagal"
+                        },
+                        "errors": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "example": [
+                            "username wajib diisi",
+                            "email wajib diisi",
+                            "password wajib diisi",
+                            "phone_number wajib diisi"
+                          ]
+                        }
                       }
                     }
-                  }
+                  ]
                 }
               }
             }
           }
-        },
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object"
-              }
-            }
-          }
-        },
-        "tags": ["Auth"]
+        }
       }
     },
     "/api/users/logout": {
       "parameters": [],
       "post": {
         "summary": "Logout",
+        "tags": ["Auth"],
         "parameters": [
           {
             "name": "Content-Type",
             "in": "header",
             "required": false,
-            "example": "application/json",
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "application/json"
           }
         ],
         "responses": {
           "200": {
-            "headers": {
-              "X-Powered-By": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Express"
-              },
-              "Content-Type": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "application/json; charset=utf-8"
-              },
-              "Content-Length": {
-                "schema": {
-                  "type": "integer"
-                },
-                "example": "64"
-              },
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "W/\"40-un4pHttmm11SJv/zwLp37nNF/qw\""
-              },
-              "Date": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Thu, 12 Jun 2025 08:14:14 GMT"
-              },
-              "Connection": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "keep-alive"
-              },
-              "Keep-Alive": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "timeout=5"
-              }
-            },
-            "description": "200 OK",
+            "description": "Logout berhasil",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
                     "message": {
-                      "type": "string"
+                      "type": "string",
+                      "example": "Logout berhasil (token masih aktif sampai expired)"
                     }
                   }
                 }
               }
             }
           }
-        },
-        "tags": ["Auth"]
+        }
       }
     },
+
     "/api/reviews/spot/3": {
       "parameters": [],
       "get": {
