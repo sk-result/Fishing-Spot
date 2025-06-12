@@ -9,8 +9,13 @@
     {
       "url": "http://localhost:3000",
       "description": "Local server"
+    },
+    {
+      "url": "https://fishing-spot-production.up.railway.app",
+      "description": "Railway production server"
     }
   ],
+
   "components": {
     "securitySchemes": {
       "bearerAuth": {
