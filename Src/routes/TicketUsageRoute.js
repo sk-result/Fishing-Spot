@@ -5,7 +5,12 @@ import { authenticateToken, authorizeRoles } from "../middleware/auth.js";
 const router = express.Router();
 
 // Penggunaan tiket oleh user (pakai tiket)
-router.post("/", authenticateToken, TicketUsageController.useTicket);
+router.post(
+  "/",
+  authenticateToken,
+  authorizeRoles("admin", "super_admin"),
+  TicketUsageController.useTicket
+);
 
 // Admin-only routes untuk kelola penggunaan tiket
 router.get(

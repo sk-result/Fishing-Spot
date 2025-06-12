@@ -29,12 +29,6 @@ const ticketUsageController = {
           .json({ status: "error", message: "Tiket tidak ditemukan" });
       }
 
-      if (ticket.user_id !== userId) {
-        return res
-          .status(403)
-          .json({ status: "error", message: "Tiket bukan milikmu" });
-      }
-
       if (ticket.status === "used") {
         return res
           .status(400)

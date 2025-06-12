@@ -3,13 +3,23 @@
   "info": {
     "title": "Fish Spot",
     "version": "1.0.0",
-    "description": ""
+    "description": "Dokumentasi RESTful API untuk manajemen pengguna di sistem Fish Spot Rental."
   },
   "servers": [
     {
-      "url": "localhost"
+      "url": "http://localhost:3000",
+      "description": "Local server"
     }
   ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
   "paths": {
     "/api/tickets/2": {
       "parameters": [],
@@ -307,9 +317,7 @@
             }
           }
         },
-        "tags": [
-          "Tickets"
-        ]
+        "tags": ["Admin: Tickets"]
       }
     },
     "/api/tickets": {
@@ -611,9 +619,7 @@
             }
           }
         },
-        "tags": [
-          "Tickets"
-        ]
+        "tags": ["Admin: Tickets"]
       }
     },
     "/api/tickets/20": {
@@ -899,9 +905,7 @@
             }
           }
         },
-        "tags": [
-          "Tickets"
-        ]
+        "tags": ["Admin: Tickets"]
       }
     },
     "/api/fishing": {
@@ -1200,9 +1204,7 @@
             }
           }
         },
-        "tags": [
-          "Fishing Spot"
-        ]
+        "tags": ["Admin: Fishing Spot"]
       },
       "get": {
         "summary": "getAll",
@@ -1320,9 +1322,7 @@
             }
           }
         },
-        "tags": [
-          "Fishing Spot"
-        ]
+        "tags": ["Fishing Spot"]
       }
     },
     "/api/fishing/1": {
@@ -1624,9 +1624,7 @@
             }
           }
         },
-        "tags": [
-          "Fishing Spot"
-        ]
+        "tags": ["Admin: Fishing Spot"]
       },
       "get": {
         "summary": "getById",
@@ -1803,9 +1801,7 @@
             }
           }
         },
-        "tags": [
-          "Fishing Spot"
-        ]
+        "tags": ["Fishing Spot"]
       }
     },
     "/api/fishing/5": {
@@ -1996,9 +1992,7 @@
             }
           }
         },
-        "tags": [
-          "Fishing Spot"
-        ]
+        "tags": ["Admin: Fishing Spot"]
       }
     },
     "/api/payment/": {
@@ -2279,9 +2273,7 @@
             }
           }
         },
-        "tags": [
-          "Payment"
-        ]
+        "tags": ["Admin: Payment"]
       }
     },
     "/api/payment/4": {
@@ -2621,9 +2613,7 @@
             }
           }
         },
-        "tags": [
-          "Payment"
-        ]
+        "tags": ["Admin: Payment"]
       }
     },
     "/api/payment/2": {
@@ -2903,9 +2893,7 @@
             }
           }
         },
-        "tags": [
-          "Payment"
-        ]
+        "tags": ["Admin: Payment"]
       }
     },
     "/api/usages/": {
@@ -3141,9 +3129,7 @@
             }
           }
         },
-        "tags": [
-          "Usages"
-        ]
+        "tags": ["Admin: Usages"]
       },
       "post": {
         "summary": "tiket usages",
@@ -3508,9 +3494,7 @@
             }
           }
         },
-        "tags": [
-          "Usages"
-        ]
+        "tags": ["Admin: Usages"]
       }
     },
     "/api/usages/4": {
@@ -3802,9 +3786,7 @@
             }
           }
         },
-        "tags": [
-          "Usages"
-        ]
+        "tags": ["Admin: Usages"]
       }
     },
     "/api/usages/2": {
@@ -4075,9 +4057,7 @@
             }
           }
         },
-        "tags": [
-          "Usages"
-        ]
+        "tags": ["Admin: Usages"]
       }
     },
     "/api/reviews/1": {
@@ -4423,9 +4403,7 @@
             }
           }
         },
-        "tags": [
-          "Reviews"
-        ]
+        "tags": ["Admin: Reviews"]
       }
     },
     "/api/reviews/3": {
@@ -4691,9 +4669,7 @@
             }
           }
         },
-        "tags": [
-          "Reviews"
-        ]
+        "tags": ["Admin: Reviews"]
       }
     },
     "/api/users/admin": {
@@ -4921,9 +4897,7 @@
             }
           }
         },
-        "tags": [
-          "Users"
-        ]
+        "tags": ["Super Admin: Auth"]
       }
     },
     "/api/users/admin/5": {
@@ -5250,9 +5224,7 @@
             }
           }
         },
-        "tags": [
-          "Users"
-        ]
+        "tags": ["Super Admin: Auth"]
       }
     },
     "/api/users/admin/": {
@@ -5557,9 +5529,7 @@
             }
           }
         },
-        "tags": [
-          "Users"
-        ]
+        "tags": ["Super Admin: Auth"]
       }
     },
     "/api/users/admin/7": {
@@ -5766,9 +5736,7 @@
             }
           }
         },
-        "tags": [
-          "Users"
-        ]
+        "tags": ["Super Admin: Auth"]
       }
     },
     "/api/tickets/": {
@@ -6087,9 +6055,7 @@
             }
           }
         },
-        "tags": [
-          "Tickets"
-        ]
+        "tags": ["Tickets"]
       }
     },
     "/api/tickets/me": {
@@ -6303,9 +6269,7 @@
             }
           }
         },
-        "tags": [
-          "Tickets"
-        ]
+        "tags": ["Tickets"]
       }
     },
     "/api/tickets/print": {
@@ -6665,9 +6629,7 @@
             }
           }
         },
-        "tags": [
-          "Tickets"
-        ]
+        "tags": ["Tickets"]
       }
     },
     "/api/users/me": {
@@ -6827,92 +6789,10 @@
             }
           }
         },
-        "tags": [
-          "Users"
-        ]
+        "tags": ["Profile"]
       }
     },
-    "/api/users/logout": {
-      "parameters": [],
-      "post": {
-        "summary": "Logout",
-        "parameters": [
-          {
-            "name": "Content-Type",
-            "in": "header",
-            "required": false,
-            "example": "application/json",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "headers": {
-              "X-Powered-By": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Express"
-              },
-              "Content-Type": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "application/json; charset=utf-8"
-              },
-              "Content-Length": {
-                "schema": {
-                  "type": "integer"
-                },
-                "example": "64"
-              },
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "W/\"40-un4pHttmm11SJv/zwLp37nNF/qw\""
-              },
-              "Date": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Thu, 12 Jun 2025 08:14:14 GMT"
-              },
-              "Connection": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "keep-alive"
-              },
-              "Keep-Alive": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "timeout=5"
-              }
-            },
-            "description": "200 OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "Users"
-        ]
-      }
-    },
+
     "/api/users/profilUserAll": {
       "parameters": [],
       "get": {
@@ -7072,9 +6952,7 @@
             }
           }
         },
-        "tags": [
-          "Users"
-        ]
+        "tags": ["Profile"]
       }
     },
     "/api/users/profilUserById/9": {
@@ -7298,9 +7176,7 @@
             }
           }
         },
-        "tags": [
-          "Users"
-        ]
+        "tags": ["Profile"]
       }
     },
     "/api/users": {
@@ -7544,9 +7420,7 @@
             }
           }
         },
-        "tags": [
-          "Users"
-        ]
+        "tags": ["Profile"]
       }
     },
     "/api/payment/pembayaran": {
@@ -7909,9 +7783,7 @@
             }
           }
         },
-        "tags": [
-          "Payment"
-        ]
+        "tags": ["Payment"]
       }
     },
     "/api/reviews": {
@@ -8152,9 +8024,7 @@
             }
           }
         },
-        "tags": [
-          "Reviews"
-        ]
+        "tags": ["Reviews"]
       },
       "get": {
         "summary": "review",
@@ -8312,9 +8182,7 @@
             }
           }
         },
-        "tags": [
-          "Reviews"
-        ]
+        "tags": ["Reviews"]
       }
     },
     "/api/users/login": {
@@ -8572,9 +8440,7 @@
             }
           }
         },
-        "tags": [
-          "Users"
-        ]
+        "tags": ["Auth"]
       }
     },
     "/api/users/register": {
@@ -8741,9 +8607,86 @@
             }
           }
         },
-        "tags": [
-          "Users"
-        ]
+        "tags": ["Auth"]
+      }
+    },
+    "/api/users/logout": {
+      "parameters": [],
+      "post": {
+        "summary": "Logout",
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": false,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "headers": {
+              "X-Powered-By": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "Express"
+              },
+              "Content-Type": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "application/json; charset=utf-8"
+              },
+              "Content-Length": {
+                "schema": {
+                  "type": "integer"
+                },
+                "example": "64"
+              },
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "W/\"40-un4pHttmm11SJv/zwLp37nNF/qw\""
+              },
+              "Date": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "Thu, 12 Jun 2025 08:14:14 GMT"
+              },
+              "Connection": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "keep-alive"
+              },
+              "Keep-Alive": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "timeout=5"
+              }
+            },
+            "description": "200 OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Auth"]
       }
     },
     "/api/reviews/spot/3": {
@@ -8931,9 +8874,7 @@
             }
           }
         },
-        "tags": [
-          "Reviews"
-        ]
+        "tags": ["Reviews"]
       }
     },
     "/api/reviews/user/2": {
@@ -9142,9 +9083,7 @@
             }
           }
         },
-        "tags": [
-          "Reviews"
-        ]
+        "tags": ["Reviews"]
       }
     },
     "/api/reviews/average/1": {
@@ -9246,43 +9185,57 @@
             }
           }
         },
-        "tags": [
-          "Reviews"
-        ]
+        "tags": ["Reviews"]
       }
     }
   },
   "tags": [
     {
-      "name": "Users",
+      "name": "Auth",
       "description": "Operations related to usages"
     },
     {
-      "name": "Tickets",
-      "description": "Operations related to tickets"
+      "name": "Profile",
+      "description": "Operations related to usages"
     },
     {
       "name": "Fishing Spot",
       "description": "Operations related to fishing spot"
     },
     {
-      "name": "Payment",
-      "description": "Operations related to payment"
+      "name": "Tickets",
+      "description": "Operations related to tickets"
     },
     {
-      "name": "Usages",
-      "description": "Operations related to usages"
+      "name": "Payment",
+      "description": "Operations related to payment"
     },
     {
       "name": "Reviews",
       "description": "Operations related to usages"
     },
     {
-      "name": "Admin",
+      "name": "Super Admin: Auth",
       "description": "Operations related to usages"
     },
     {
-      "name": "Super_Admin",
+      "name": "Admin: Fishing Spot",
+      "description": "Operations related to fishing spot"
+    },
+    {
+      "name": "Admin: Tickets",
+      "description": "Operations related to usages"
+    },
+    {
+      "name": "Admin: Payment",
+      "description": "Operations related to usages"
+    },
+    {
+      "name": "Admin: Usages",
+      "description": "Operations related to usages"
+    },
+    {
+      "name": "Admin: Reviews",
       "description": "Operations related to usages"
     }
   ]
