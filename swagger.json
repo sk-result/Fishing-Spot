@@ -4424,7 +4424,7 @@
           }
         },
         "tags": [
-          "Other"
+          "Reviews"
         ]
       }
     },
@@ -4692,7 +4692,7 @@
           }
         },
         "tags": [
-          "Other"
+          "Reviews"
         ]
       }
     },
@@ -4922,7 +4922,7 @@
           }
         },
         "tags": [
-          "Other"
+          "Users"
         ]
       }
     },
@@ -5251,7 +5251,7 @@
           }
         },
         "tags": [
-          "Other"
+          "Users"
         ]
       }
     },
@@ -5558,7 +5558,7 @@
           }
         },
         "tags": [
-          "Other"
+          "Users"
         ]
       }
     },
@@ -5767,7 +5767,7 @@
           }
         },
         "tags": [
-          "Other"
+          "Users"
         ]
       }
     },
@@ -6828,7 +6828,7 @@
           }
         },
         "tags": [
-          "Other"
+          "Users"
         ]
       }
     },
@@ -6909,7 +6909,7 @@
           }
         },
         "tags": [
-          "Other"
+          "Users"
         ]
       }
     },
@@ -7073,7 +7073,7 @@
           }
         },
         "tags": [
-          "Other"
+          "Users"
         ]
       }
     },
@@ -7299,7 +7299,7 @@
           }
         },
         "tags": [
-          "Other"
+          "Users"
         ]
       }
     },
@@ -7545,7 +7545,7 @@
           }
         },
         "tags": [
-          "Other"
+          "Users"
         ]
       }
     },
@@ -8153,7 +8153,7 @@
           }
         },
         "tags": [
-          "Other"
+          "Reviews"
         ]
       },
       "get": {
@@ -8313,7 +8313,7 @@
           }
         },
         "tags": [
-          "Other"
+          "Reviews"
         ]
       }
     },
@@ -8573,7 +8573,7 @@
           }
         },
         "tags": [
-          "Other"
+          "Users"
         ]
       }
     },
@@ -8742,7 +8742,7 @@
           }
         },
         "tags": [
-          "Other"
+          "Users"
         ]
       }
     },
@@ -8932,7 +8932,7 @@
           }
         },
         "tags": [
-          "Other"
+          "Reviews"
         ]
       }
     },
@@ -9143,7 +9143,7 @@
           }
         },
         "tags": [
-          "Other"
+          "Reviews"
         ]
       }
     },
@@ -9247,12 +9247,16 @@
           }
         },
         "tags": [
-          "Other"
+          "Reviews"
         ]
       }
     }
   },
   "tags": [
+    {
+      "name": "Users",
+      "description": "Operations related to usages"
+    },
     {
       "name": "Tickets",
       "description": "Operations related to tickets"
@@ -9267,6 +9271,18 @@
     },
     {
       "name": "Usages",
+      "description": "Operations related to usages"
+    },
+    {
+      "name": "Reviews",
+      "description": "Operations related to usages"
+    },
+    {
+      "name": "Admin",
+      "description": "Operations related to usages"
+    },
+    {
+      "name": "Super_Admin",
       "description": "Operations related to usages"
     }
   ]
