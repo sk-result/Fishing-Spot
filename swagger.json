@@ -4136,51 +4136,51 @@
   "tags": [
     {
       "name": "Auth",
-      "description": "Operations related to usages"
+      "description": "Authentication and user session management, including login and registration"
     },
     {
       "name": "Profile",
-      "description": "Operations related to usages"
+      "description": "Operations related to viewing and updating user profiles"
     },
     {
       "name": "Fishing Spot",
-      "description": "Operations related to fishing spot"
+      "description": "Browse, search, and get detailed information about fishing spots"
     },
     {
       "name": "Tickets",
-      "description": "Operations related to tickets"
+      "description": "Ticket booking, management, and related operations"
     },
     {
       "name": "Payment",
-      "description": "Operations related to payment"
+      "description": "Payment processing and transaction management"
     },
     {
       "name": "Reviews",
-      "description": "Operations related to usages"
+      "description": "User-generated reviews and ratings for fishing spots"
     },
     {
       "name": "Super Admin: Auth",
-      "description": "Operations related to usages"
+      "description": "Authentication and access control for Super Admin users"
     },
     {
       "name": "Admin: Fishing Spot",
-      "description": "Operations related to fishing spot"
+      "description": "Admin operations for managing fishing spot data"
     },
     {
       "name": "Admin: Tickets",
-      "description": "Operations related to usages"
+      "description": "Admin management of ticket data and bookings"
     },
     {
       "name": "Admin: Payment",
-      "description": "Operations related to usages"
+      "description": "Admin view and control over payment transactions"
     },
     {
       "name": "Admin: Usages",
-      "description": "Operations related to usages"
+      "description": "Admin-level monitoring and analysis of system usage"
     },
     {
       "name": "Admin: Reviews",
-      "description": "Operations related to usages"
+      "description": "Moderation and management of user-submitted reviews"
     }
   ]
 }
