@@ -1486,6 +1486,11 @@
       "get": {
         "summary": "Get usage by ID",
         "tags": ["Admin: Usages"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
@@ -1580,6 +1585,11 @@
       "delete": {
         "summary": "Delete usage by ID",
         "tags": ["Admin: Usages"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
