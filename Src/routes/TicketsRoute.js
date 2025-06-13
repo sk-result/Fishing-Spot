@@ -20,11 +20,5 @@ router.get(
   authorizeRoles("admin", "super_admin"),
   TicketsController.getById
 );
-router.delete(
-  "/:id",
-  authenticateToken,
-  authorizeRoles("admin", "super_admin"),
-  TicketsController.delete
-);
 
 export default router;

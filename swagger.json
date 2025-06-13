@@ -183,112 +183,6 @@
             }
           }
         }
-      },
-      "delete": {
-        "summary": "Hapus tiket berdasarkan ID",
-        "tags": ["Admin: Tickets"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tiket berhasil dihapus",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "example": "success"
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Tiket telah dihapus"
-                    },
-                    "data": {
-                      "nullable": true,
-                      "example": null
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized - token bermasalah",
-            "content": {
-              "application/json": {
-                "examples": {
-                  "expired": {
-                    "summary": "Token kadaluwarsa",
-                    "value": {
-                      "message": "Token telah kedaluwarsa"
-                    }
-                  },
-                  "invalid": {
-                    "summary": "Token tidak valid",
-                    "value": {
-                      "message": "Format token tidak valid"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Akses ditolak",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Akses ditolak: role 'user' tidak diizinkan"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Tiket tidak ditemukan",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "example": "error"
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Tiket tidak ditemukan"
-                    },
-                    "data": {
-                      "nullable": true,
-                      "example": null
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
       }
     },
     "/api/fishing": {
@@ -560,27 +454,27 @@
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
                 "type": "object",
                 "properties": {
-                  "name": { "type": "string" },
-                  "description": { "type": "string" },
-                  "price_per_hour": { "type": "integer" },
-                  "image": { "type": "string" },
+                  "name": { "type": "string", "example": "mancing1" },
+                  "description": { "type": "string", "example": "mancinggg1" },
+                  "price_per_hour": { "type": "string", "example": "10000" },
+                  "image": { "type": "string", "format": "binary" },
                   "status": {
                     "type": "string",
-                    "enum": ["available", "unavailable"]
+                    "enum": ["available", "unavailable"],
+                    "example": "available"
                   }
                 },
-                "required": ["name", "description", "price_per_hour", "status"]
-              },
-              "example": {
-                "name": "mancing",
-                "description": "mancinggg ",
-                "price_per_hour": 10000,
-                "image": "1749723345170-Screenshot.png",
-                "status": "available"
+                "required": [
+                  "name",
+                  "description",
+                  "price_per_hour",
+                  "image",
+                  "status"
+                ]
               }
             }
           }
