@@ -5,7 +5,6 @@ import { authenticateToken, authorizeRoles } from "../middleware/auth.js";
 const router = express.Router();
 router.get("/me", authenticateToken, TicketsController.getMyTickets);
 router.post("/", authenticateToken, TicketsController.create);
-// router.put("/:id", authenticateToken, TicketsController.update);
 router.post("/print", authenticateToken, TicketsController.cetakTicket);
 
 router.get(
