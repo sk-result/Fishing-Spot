@@ -23,7 +23,7 @@ router.get("/profilUserById/:id", authenticateToken, Users.GetById);
 
 // List admin-only
 router.get(
-  "/admin",
+  "/super_admin",
   authenticateToken,
   authorizeRoles("super_admin"),
   Users.GetAllAdmin
@@ -31,19 +31,19 @@ router.get(
 
 // Admin only create user dengan role dan update user dengan role
 router.post(
-  "/admin",
+  "/super_admin",
   authenticateToken,
   authorizeRoles("super_admin"),
   Users.AdminCreateUser
 );
 router.patch(
-  "/admin/:id",
+  "/super_admin/:id",
   authenticateToken,
   authorizeRoles("super_admin"),
   Users.Update
 );
 router.delete(
-  "/admin/:id",
+  "/super_admin/:id",
   authenticateToken,
   authorizeRoles("super_admin"),
   authorizeOwnerOrAdmin,

@@ -1781,7 +1781,7 @@
         }
       }
     },
-    "/api/users/admin": {
+    "/api/users/super_admin": {
       "get": {
         "summary": "Get All Admins (Hanya dapat diakses oleh Super Admin)",
         "tags": ["Super Admin: Auth"],
@@ -2019,7 +2019,7 @@
         }
       }
     },
-    "/api/users/admin/{id}": {
+    "/api/users/super_admin/{id}": {
       "patch": {
         "summary": "Update (Hanya dapat diakses Super Admin)",
         "tags": ["Super Admin: Auth"],
