@@ -428,7 +428,7 @@ const UsersController = {
         });
       }
 
-      const { error, value } = validasiSchema.validasiPartialUpdate.validate(
+      const { error, value } = validasiSchema.validasiPartialUpdateSuper.validate(
         req.body,
         {
           abortEarly: false,
