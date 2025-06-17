@@ -419,7 +419,6 @@ const UsersController = {
         });
       }
 
-      // Cek apakah user dengan ID tersebut ada
       const existingUser = await usersModel.getById(id);
       if (!existingUser) {
         return res.status(404).json({
@@ -428,12 +427,10 @@ const UsersController = {
         });
       }
 
-      const { error, value } = validasiSchema.validasiPartialUpdateSuper.validate(
-        req.body,
-        {
+      const { error, value } =
+        validasiSchema.validasiPartialUpdateSuper.validate(req.body, {
           abortEarly: false,
-        }
-      );
+        });
 
       if (error) {
         const errors = error.details.map((detail) => detail.message);
@@ -462,16 +459,21 @@ const UsersController = {
         }
       }
 
-      const hashedPassword = await bcrypt.hash(value.password, 10);
-
-      // Role bisa diupdate hanya oleh super_admin (harus dicek di middleware)
-      const updatedUser = await usersModel.update(id, {
+      // Siapkan data yang akan diupdate
+      const updateData = {
         username: value.username,
         email: value.email,
-        password: hashedPassword,
         phone_number: value.phone_number,
         role: value.role,
-      });
+      };
+
+      // Kalau ada password baru, hash dulu
+      if (value.password) {
+        const hashedPassword = await bcrypt.hash(value.password, 10);
+        updateData.password = hashedPassword;
+      }
+
+      const updatedUser = await usersModel.update(id, updateData);
 
       res.status(200).json({
         status: "success",
