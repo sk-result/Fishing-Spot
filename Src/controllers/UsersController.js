@@ -350,7 +350,7 @@ const UsersController = {
         req.body.phone_number = req.body.phone_number.replace(/\s+/g, "");
       }
 
-      const { error, value } = validasiSchema.validasiRegister.validate(
+      const { error, value } = validasiSchema.validasiPartialUpdate.validate(
         req.body,
         {
           abortEarly: false,
